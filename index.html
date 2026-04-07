@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HouseCallPro Attachment Exporter</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  ::selection { background: rgba(99,102,241,0.3); }
+
+  body {
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 30% 20%, #0c1222 0%, #060a12 50%, #000000 100%);
+    font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #d1d5db;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @keyframes fade-up { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+  @keyframes pulse-border { 0%,100%{border-color:rgba(99,102,241,0.3)} 50%{border-color:rgba(99,102,241,0.6)} }
+
+  .fade-up { animation: fade-up 0.5s ease both; }
+  .shake { animation: shake 0.4s ease; }
+
+  /* ── Gate ──────────────────────────────────────── */
+  #gate {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .gate-card {
+    background: linear-gradient(165deg, rgba(15,23,42,0.95), rgba(10,15,30,0.98));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 24px;
+    padding: 48px 40px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+    animation: fade-up 0.6s ease both;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 24px;
+    background: rgba(99,102,241,0.08);
+    border: 1px solid rgba(99,102,241,0.15);
+  }
+  .badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #818cf8;
+  }
+  .badge-text {
+    color: #818cf8; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .gate-card h1 {
+    font-size: 24px; font-weight: 700; color: #f1f5f9;
+    letter-spacing: -0.5px; margin-bottom: 8px;
+  }
+  .gate-card .subtitle {
+    color: #475569; font-size: 14px; line-height: 1.6; margin-bottom: 32px;
+  }
+  #code-input {
+    width: 100%; padding: 14px 16px; border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(0,0,0,0.3); color: #e2e8f0;
+    font-size: 15px; font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.5px; outline: none; transition: border-color 0.2s;
+    margin-bottom: 12px;
+  }
+  #code-input:focus { border-color: rgba(99,102,241,0.5); }
+  #code-input.error { border-color: rgba(239,68,68,0.4); }
+  #error-msg {
+    color: #f87171; font-size: 12px; font-weight: 500;
+    margin-bottom: 12px; min-height: 18px;
+  }
+  #submit-btn {
+    width: 100%; padding: 14px; border-radius: 12px; border: none;
+    background: rgba(255,255,255,0.04); color: #334155;
+    font-size: 14px; font-weight: 600; cursor: default; transition: all 0.2s;
+  }
+  #submit-btn.active {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: #fff; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(79,70,229,0.3);
+  }
+  .gate-footer {
+    margin-top: 24px; text-align: center;
+    color: #334155; font-size: 11px;
+  }
+
+  /* ── Main Tool ────────────────────────────────── */
+  #tool { display: none; }
+  .container { max-width: 600px; margin: 0 auto; padding: 40px 24px 64px; }
+
+  .header { text-align: center; margin-bottom: 56px; }
+  .header h1 {
+    font-size: 30px; font-weight: 700; color: #f1f5f9;
+    letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 12px;
+  }
+  .header p {
+    color: #64748b; font-size: 15px; line-height: 1.7;
+    max-width: 420px; margin: 0 auto;
+  }
+
+  .step-card {
+    background: linear-gradient(165deg, rgba(15,23,42,0.6), rgba(10,15,30,0.4));
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 16px; padding: 28px;
+    margin-bottom: 20px;
+    display: flex; align-items: flex-start; gap: 20px;
+  }
+  .step-num {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+    background: rgba(99,102,241,0.12); color: #818cf8;
+    border: 1px solid rgba(99,102,241,0.15);
+  }
+  .step-card h3 {
+    font-size: 15px; font-weight: 600; color: #e2e8f0; margin-bottom: 8px;
+  }
+  .step-card p {
+    color: #64748b; font-size: 13px; line-height: 1.6;
+  }
+  .step-card strong { color: #cbd5e1; }
+  .step-card a { color: #818cf8; text-decoration: underline; text-underline-offset: 3px; }
+  .step-card code {
+    background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px;
+    font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: #94a3b8;
+  }
+
+  /* Bookmarklet button */
+  .bm-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin: 16px 0 12px; }
+  #bookmarklet {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; color: #fff;
+    background: linear-gradient(135deg, #4338ca, #6366f1);
+    text-decoration: none; cursor: grab;
+    border: 2px solid rgba(99,102,241,0.3);
+    box-shadow: 0 4px 20px rgba(79,70,229,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: pulse-border 2.5s ease-in-out infinite;
+    user-select: none; -webkit-user-select: none;
+  }
+  #bookmarklet:active { cursor: grabbing; }
+  .bm-hint { color: #475569; font-size: 11px; }
+
+  #copy-btn {
+    background: transparent; border: 1px solid rgba(255,255,255,0.06);
+    color: #475569; padding: 6px 12px; border-radius: 6px;
+    font-size: 11px; cursor: pointer; transition: all 0.2s;
+    font-family: inherit;
+  }
+  #copy-btn.copied {
+    background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.2);
+    color: #34d399;
+  }
+
+  /* Info grid */
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin: 40px 0 56px;
+  }
+  .info-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.03);
+    border-radius: 12px; padding: 16px;
+  }
+  .info-card .icon { font-size: 18px; margin-bottom: 4px; }
+  .info-card .label { font-size: 14px; font-weight: 600; color: #cbd5e1; }
+  .info-card .desc { font-size: 11px; color: #475569; }
+
+  /* FAQ */
+  .faq {
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(255,255,255,0.03);
+    border-radius: 16px; padding: 28px; margin-bottom: 40px;
+  }
+  .faq h3 {
+    font-size: 12px; font-weight: 600; color: #64748b;
+    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px;
+  }
+  .faq-item { margin-bottom: 16px; }
+  .faq-item:last-child { margin-bottom: 0; }
+  .faq-item .q { font-size: 14px; font-weight: 500; color: #94a3b8; margin-bottom: 4px; }
+  .faq-item .a { font-size: 13px; color: #475569; line-height: 1.5; }
+
+  .footer {
+    text-align: center; color: #1e293b; font-size: 11px;
+  }
+  .footer code {
+    font-family: 'IBM Plex Mono', monospace; color: #334155;
+  }
+  #signout-btn {
+    color: #334155; text-decoration: underline; background: none;
+    border: none; cursor: pointer; font-size: 11px; font-family: inherit;
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ ACCESS GATE ════════════════════ -->
+<div id="gate">
+  <div class="gate-card" id="gate-card">
+    <div class="badge">
+      <div class="badge-dot"></div>
+      <span class="badge-text">Data Migration Tool</span>
+    </div>
+    <h1>Attachment Exporter</h1>
+    <p class="subtitle">Enter the access code you were provided to get started.</p>
+    <input type="text" id="code-input" placeholder="HCP-EX-XXXXXXXX" spellcheck="false" autocomplete="off">
+    <div id="error-msg"></div>
+    <button id="submit-btn" onclick="tryAccess()">Access Export Tool</button>
+    <p class="gate-footer">Don't have a code? Reach out to the person who shared this tool with you.</p>
+  </div>
+</div>
+
+<!-- ════════════════════ MAIN TOOL ════════════════════ -->
+<div id="tool">
+  <div class="container">
+    <!-- Header -->
+    <div class="header fade-up">
+      <div class="badge" style="margin-bottom:20px">
+        <div class="badge-dot"></div>
+        <span class="badge-text">Data Migration Tool</span>
+      </div>
+      <h1>Export HouseCallPro<br>Attachments</h1>
+      <p>Download every customer photo and document from your HouseCallPro account. Three steps, no software to install.</p>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step-card fade-up" style="animation-delay:0.1s">
+      <div class="step-num">1</div>
+      <div>
+        <h3>Save the Export button to your bookmarks</h3>
+        <p>Drag the button below into your bookmarks bar. If your bookmarks bar is hidden, press <code>Ctrl+Shift+B</code> (Win) or <code>⌘+Shift+B</code> (Mac) to show it.</p>
+        <div class="bm-row">
+          <a id="bookmarklet" href="#" onclick="return false" draggable="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export HCP Attachments
+          </a>
+          <span class="bm-hint">← drag to bookmarks bar</span>
+        </div>
+        <button id="copy-btn" onclick="copyBookmarklet()">Can't drag? Copy code manually →</button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card fade-up" style="animation-delay:0.2s">
+      <div class="step-num">2</div>
+      <div>
+        <h3>Log into HouseCallPro</h3>
+        <p>Go to <a href="https://pro.housecallpro.com" target="_blank" rel="noopener noreferrer">pro.housecallpro.com</a> and sign in to your account as usual. Any page will work.</p>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-card fade-up" style="animation-delay:0.3s">
+      <div class="step-num">3</div>
+      <div>
+        <h3>Click the bookmark and wait</h3>
+        <p>Click <strong>"Export HCP Attachments"</strong> in your bookmarks bar. A progress overlay will appear. When each batch is ready, a ZIP file will download automatically. Large accounts will produce multiple ZIP files (500 attachments per ZIP to prevent browser crashes).</p>
+      </div>
+    </div>
+
+    <!-- Info cards -->
+    <div class="info-grid fade-up" style="animation-delay:0.4s">
+      <div class="info-card"><div class="icon">⏱</div><div class="label">~20 min</div><div class="desc">per 1,000 customers</div></div>
+      <div class="info-card"><div class="icon">🔒</div><div class="label">100% local</div><div class="desc">nothing leaves your browser</div></div>
+      <div class="info-card"><div class="icon">📦</div><div class="label">Auto-chunked</div><div class="desc">500 files per ZIP</div></div>
+      <div class="info-card"><div class="icon">📋</div><div class="label">CSV log</div><div class="desc">full audit trail included</div></div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq fade-up" style="animation-delay:0.5s">
+      <h3>Frequently Asked Questions</h3>
+      <div class="faq-item"><div class="q">What if my browser crashes or I close the tab?</div><div class="a">Just run the bookmarklet again. You may get duplicate files in the new ZIPs, but the CSV log will help you reconcile.</div></div>
+      <div class="faq-item"><div class="q">Why are there multiple ZIP files?</div><div class="a">To prevent your browser from running out of memory. Each ZIP contains up to 500 files. A 5,000-attachment account will produce about 10 ZIPs.</div></div>
+      <div class="faq-item"><div class="q">Does this send my data anywhere?</div><div class="a">No. Everything runs inside your browser. Files download directly from HouseCallPro's servers to your computer. No third-party servers are involved.</div></div>
+      <div class="faq-item"><div class="q">What browser should I use?</div><div class="a">Google Chrome or Microsoft Edge. Avoid Safari — it handles large downloads less reliably.</div></div>
+      <div class="faq-item"><div class="q">What do I do with the ZIP files?</div><div class="a">Send them to the person helping with your data migration. They'll handle the import into your new system.</div></div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer fade-up" style="animation-delay:0.6s">
+      Access code: <code id="footer-code"></code>
+      · <button id="signout-btn" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ACCESS CODES
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const VALID = [
+  "TestExport311",
+  "HCP-EX-7f3a9b2c",
+  "HCP-EX-4e8d1f6a",
+  "HCP-EX-9c2b5e8d",
+  "HCP-EX-1a7f3c9e",
+  "HCP-EX-6d4b8a2f",
+  "HCP-EX-3e9c1d7b",
+  "HCP-EX-8b5a2f4e",
+  "HCP-EX-2c7d9a1f",
+  "HCP-EX-5f3b8c6d",
+  "HCP-EX-0a4e7d9c"
+];
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// BOOKMARKLET CODE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const BOOKMARKLET = `javascript:void(function(){if(!window.location.hostname.includes('housecallpro.com')){alert('Please run this from your HouseCallPro account!\\nGo to pro.housecallpro.com first.');return;}if(window.__hcpExporterRunning){alert('Export is already running!');return;}window.__hcpExporterRunning=true;var CHUNK=500;var PAGE_SIZE=100;var ATT_PAGE_SIZE=100;var DELAY=300;var overlay=document.createElement('div');overlay.id='hcp-dl-overlay';overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(8,8,18,0.92);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,sans-serif;backdrop-filter:blur(4px);';var box=document.createElement('div');box.style.cssText='background:linear-gradient(145deg,#111827,#0f172a);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:44px;max-width:520px;width:92%;color:#d1d5db;box-shadow:0 30px 80px rgba(0,0,0,0.6);';function el(tag,styles,text){var e=document.createElement(tag);if(styles)e.style.cssText=styles;if(text)e.textContent=text;return e;}var title=el('h2','margin:0 0 6px 0;color:#f9fafb;font-size:18px;font-weight:700;letter-spacing:-0.3px;','HouseCallPro Attachment Export');var phase=el('p','margin:0 0 28px 0;color:#6b7280;font-size:12px;font-weight:500;letter-spacing:0.3px;text-transform:uppercase;','Initializing...');var trackOuter=el('div','background:#1f2937;border-radius:10px;height:20px;overflow:hidden;margin-bottom:14px;position:relative;');var trackFill=el('div','background:linear-gradient(90deg,#6366f1,#8b5cf6,#a78bfa);height:100%;width:0%;transition:width 0.4s ease;border-radius:10px;position:relative;');var trackShine=el('div','position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.12),transparent);border-radius:10px 10px 0 0;');trackFill.appendChild(trackShine);trackOuter.appendChild(trackFill);var stats=el('div','display:flex;gap:20px;margin-bottom:6px;');var statFiles=el('span','font-size:13px;color:#9ca3af;','0 files');var statErrors=el('span','font-size:13px;color:#9ca3af;','0 errors');var statZips=el('span','font-size:13px;color:#9ca3af;','0 ZIPs');stats.appendChild(statFiles);stats.appendChild(statErrors);stats.appendChild(statZips);var detail=el('p','margin:0 0 24px 0;font-size:12px;color:#4b5563;min-height:18px;','');var btnRow=el('div','display:flex;gap:10px;');var cancelBtn=el('button','background:rgba(255,255,255,0.05);color:#9ca3af;border:1px solid rgba(255,255,255,0.08);padding:9px 22px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s;','Cancel');cancelBtn.onmouseover=function(){this.style.background='rgba(255,255,255,0.1)';};cancelBtn.onmouseout=function(){this.style.background='rgba(255,255,255,0.05)';};btnRow.appendChild(cancelBtn);box.appendChild(title);box.appendChild(phase);box.appendChild(trackOuter);box.appendChild(stats);box.appendChild(detail);box.appendChild(btnRow);overlay.appendChild(box);document.body.appendChild(overlay);var cancelled=false;function cleanup(){cancelled=true;window.__hcpExporterRunning=false;overlay.remove();}cancelBtn.onclick=cleanup;function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}function pct(n,t){return Math.round(n/Math.max(t,1)*100);}function getCSRF(){var m=document.querySelector('meta[name="csrf-token"]');if(m)return m.getAttribute('content');var ck=document.cookie.split(';');for(var i=0;i<ck.length;i++){var c=ck[i].trim();if(c.toLowerCase().indexOf('csrf')===0)return c.split('=')[1];}return '';}async function api(url){var h={accept:'application/json'};var csrf=getCSRF();if(csrf)h['x-csrf-token']=csrf;var r=await fetch(url,{credentials:'include',headers:h});if(!r.ok)throw new Error('HTTP '+r.status+' on '+url.substring(0,80));return r.json();}async function dlBlob(url){var r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);return r.blob();}function safeName(s,max){return(s||'unnamed').replace(/[^a-zA-Z0-9 ._-]/g,'_').substring(0,max||60);}async function run(){try{phase.textContent='PHASE 1 OF 3 \\u2014 SCANNING CUSTOMERS';var first=await api('/alpha/customers?page=1&page_size=1&contractor=false');var totalCust=first.total_count||0;detail.textContent='Found '+totalCust+' customers';await sleep(400);var allFiles=[];var pg=1;var custDone=0;while(!cancelled){var cd=await api('/alpha/customers?page='+pg+'&page_size='+PAGE_SIZE+'&contractor=false');var custs=cd.data||[];if(!custs.length)break;var totalPgs=cd.total_pages_count||1;for(var i=0;i<custs.length;i++){if(cancelled)return;custDone++;var c=custs[i];var cName=((c.first_name||'')+' '+(c.last_name||'')).trim()||c.display_name||'Unknown';trackFill.style.width=pct(custDone,totalCust)*0.4+'%';detail.textContent='Scanning: '+cName+' ('+custDone+'/'+totalCust+')';var ap=1;while(true){try{var ad=await api('/api/customers/'+c.id+'/attachments?page='+ap+'&page_size='+ATT_PAGE_SIZE+'&sort_by=created_at&sort_direction=desc&attachable_type=');var atts=ad.data||[];for(var j=0;j<atts.length;j++){var a=atts[j];var dlUrl=a.download_url||a.attachment_file_url;if(!dlUrl)continue;allFiles.push({custName:cName,custId:c.id,attId:a.id||'',fileName:a.file_name||a.file_file_name||'file',attType:a.attachable_type||'Unknown',dlUrl:dlUrl});}statFiles.textContent=allFiles.length+' files found';if(ap>=(ad.total_pages_count||1))break;ap++;}catch(e){break;}}await sleep(DELAY);}if(pg>=totalPgs)break;pg++;}if(cancelled)return;if(!allFiles.length){phase.textContent='COMPLETE \\u2014 NO ATTACHMENTS FOUND';detail.textContent='No customer attachments were found in this account.';trackFill.style.width='100%';trackFill.style.background='linear-gradient(90deg,#f59e0b,#eab308)';cancelBtn.textContent='Close';window.__hcpExporterRunning=false;return;}var totalChunks=Math.ceil(allFiles.length/CHUNK);phase.textContent='PHASE 2 OF 3 \\u2014 LOADING ZIP LIBRARY';detail.textContent=allFiles.length+' attachments across '+custDone+' customers. Downloading in '+totalChunks+' ZIP'+(totalChunks>1?'s':'')+'...';var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';document.head.appendChild(s);await new Promise(function(ok,fail){s.onload=ok;s.onerror=function(){fail(new Error('Failed to load JSZip'));};});await sleep(300);phase.textContent='PHASE 3 OF 3 \\u2014 DOWNLOADING & ZIPPING';var downloaded=0;var errors=0;var zipCount=0;var csvRows=['customer_id,customer_name,attachment_id,file_name,type,zip_file,status'];for(var chunkStart=0;chunkStart<allFiles.length;chunkStart+=CHUNK){if(cancelled)return;var chunkEnd=Math.min(chunkStart+CHUNK,allFiles.length);var chunk=allFiles.slice(chunkStart,chunkEnd);zipCount++;var zipLabel=totalChunks>1?'_part'+zipCount+'of'+totalChunks:'';var zipName='HCP_Attachments'+zipLabel+'_'+(new Date().toISOString().slice(0,10))+'.zip';statZips.textContent='ZIP '+zipCount+'/'+totalChunks;var zip=new JSZip();for(var k=0;k<chunk.length;k++){if(cancelled)return;var f=chunk[k];var globalIdx=chunkStart+k+1;var pctVal=40+pct(globalIdx,allFiles.length)*0.55;trackFill.style.width=pctVal+'%';detail.textContent=f.custName+' \\u2014 '+f.fileName+' ('+globalIdx+'/'+allFiles.length+')';var folder=safeName(f.custName,50)+'_'+f.custId.slice(-8);var fName=f.attType+'_'+(f.attId?f.attId.slice(-8):'')+'_'+safeName(f.fileName,80);var fPath=folder+'/'+fName;try{var blob=await dlBlob(f.dlUrl);zip.file(fPath,blob);downloaded++;csvRows.push('"'+f.custId+'","'+f.custName+'","'+f.attId+'","'+f.fileName+'","'+f.attType+'","'+zipName+'","success"');}catch(e){errors++;csvRows.push('"'+f.custId+'","'+f.custName+'","'+f.attId+'","'+f.fileName+'","'+f.attType+'","'+zipName+'","error:'+e.message.substring(0,40)+'"');}statFiles.textContent=downloaded+' downloaded';statErrors.textContent=errors+' errors';if(k%3===0)await sleep(80);}if(chunkStart+CHUNK>=allFiles.length){zip.file('_download_log.csv',csvRows.join('\\n'));}detail.textContent='Compressing ZIP '+zipCount+'/'+totalChunks+'... Please wait.';var content=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:3}},function(meta){var compPct=95+meta.percent*0.05;if(chunkStart+CHUNK<allFiles.length)compPct=40+pct(chunkEnd,allFiles.length)*0.55;trackFill.style.width=Math.min(compPct,99)+'%';});var dl=document.createElement('a');dl.href=URL.createObjectURL(content);dl.download=zipName;dl.click();URL.revokeObjectURL(dl.href);detail.textContent='ZIP '+zipCount+' downloaded!';await sleep(800);}trackFill.style.width='100%';trackFill.style.background='linear-gradient(90deg,#059669,#10b981,#34d399)';phase.textContent='EXPORT COMPLETE';phase.style.color='#34d399';title.textContent='All Done!';var summary=downloaded+' files downloaded in '+zipCount+' ZIP'+(zipCount>1?'s':'');if(errors)summary+=' ('+errors+' errors \\u2014 see log)';detail.textContent=summary;statFiles.textContent=downloaded+' files';statZips.textContent=zipCount+' ZIP'+(zipCount>1?'s':'');cancelBtn.textContent='Close';cancelBtn.style.background='rgba(16,185,129,0.15)';cancelBtn.style.borderColor='rgba(16,185,129,0.3)';cancelBtn.style.color='#34d399';window.__hcpExporterRunning=false;}catch(e){phase.textContent='ERROR';phase.style.color='#ef4444';detail.textContent=e.message;trackFill.style.background='linear-gradient(90deg,#dc2626,#ef4444)';cancelBtn.textContent='Close';window.__hcpExporterRunning=false;}}run();})();`;
+
+// Set the bookmarklet href
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('bookmarklet').href = BOOKMARKLET;
+
+  // Check session
+  var stored = sessionStorage.getItem('hcp_access');
+  if (stored && VALID.includes(stored)) {
+    showTool(stored);
+  }
+
+  // Enter key on input
+  document.getElementById('code-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') tryAccess();
+  });
+
+  // Update button state on input
+  document.getElementById('code-input').addEventListener('input', function() {
+    var btn = document.getElementById('submit-btn');
+    var inp = document.getElementById('code-input');
+    inp.classList.remove('error');
+    document.getElementById('error-msg').textContent = '';
+    if (this.value.trim()) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+
+  // Anti-sharing: disable right-click + common key combos
+  document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && ['s','u','p'].includes(e.key.toLowerCase())) e.preventDefault();
+    if (e.key === 'F12') e.preventDefault();
+  });
+});
+
+function tryAccess() {
+  var code = document.getElementById('code-input').value.trim();
+  if (VALID.includes(code)) {
+    sessionStorage.setItem('hcp_access', code);
+    showTool(code);
+  } else {
+    document.getElementById('error-msg').textContent = 'Invalid access code. Please check and try again.';
+    document.getElementById('code-input').classList.add('error');
+    var card = document.getElementById('gate-card');
+    card.classList.add('shake');
+    setTimeout(function() { card.classList.remove('shake'); }, 500);
+  }
+}
+
+function showTool(code) {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('tool').style.display = 'block';
+  document.getElementById('footer-code').textContent = code.substring(0, 6) + '••••';
+}
+
+function signOut() {
+  sessionStorage.removeItem('hcp_access');
+  document.getElementById('tool').style.display = 'none';
+  document.getElementById('gate').style.display = 'flex';
+  document.getElementById('code-input').value = '';
+  document.getElementById('submit-btn').classList.remove('active');
+}
+
+function copyBookmarklet() {
+  navigator.clipboard.writeText(BOOKMARKLET).then(function() {
+    var btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied to clipboard';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = "Can't drag? Copy code manually →";
+      btn.classList.remove('copied');
+    }, 2500);
+  });
+}
+</script>
+</body>
+</html>
