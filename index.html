@@ -93,9 +93,9 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Export HCP Attachments
           </a>
-          <span class="bm-hint">\u2190 drag to bookmarks bar</span>
+          <span class="bm-hint">← drag to bookmarks bar</span>
         </div>
-        <button id="copy-btn" onclick="copyBookmarklet()">Can't drag? Copy code manually \u2192</button>
+        <button id="copy-btn" onclick="copyBookmarklet()">Can't drag? Copy code manually →</button>
       </div>
     </div>
     <div class="step-card fade-up" style="animation-delay:0.2s">
@@ -113,10 +113,10 @@
       </div>
     </div>
     <div class="info-grid fade-up" style="animation-delay:0.4s">
-      <div class="info-card"><div class="icon">\u23f1</div><div class="label">~5 min</div><div class="desc">per 1,000 images</div></div>
-      <div class="info-card"><div class="icon">\ud83d\udd12</div><div class="label">100% local</div><div class="desc">nothing leaves your browser</div></div>
-      <div class="info-card"><div class="icon">\ud83d\udcc2</div><div class="label">Direct to disk</div><div class="desc">no memory limits</div></div>
-      <div class="info-card"><div class="icon">\ud83d\udccb</div><div class="label">Excel + CSV log</div><div class="desc">full audit trail included</div></div>
+      <div class="info-card"><div class="icon">⏱</div><div class="label">~5 min</div><div class="desc">per 1,000 images</div></div>
+      <div class="info-card"><div class="icon">🔒</div><div class="label">100% local</div><div class="desc">nothing leaves your browser</div></div>
+      <div class="info-card"><div class="icon">📂</div><div class="label">Direct to disk</div><div class="desc">no memory limits</div></div>
+      <div class="info-card"><div class="icon">📋</div><div class="label">Excel + CSV log</div><div class="desc">full audit trail included</div></div>
     </div>
     <div class="faq fade-up" style="animation-delay:0.5s">
       <h3>Frequently Asked Questions</h3>
@@ -128,7 +128,7 @@
     </div>
     <div class="footer fade-up" style="animation-delay:0.6s">
       Access code: <code id="footer-code"></code>
-      \u00b7 <button id="signout-btn" onclick="signOut()">Sign out</button>
+      · <button id="signout-btn" onclick="signOut()">Sign out</button>
     </div>
   </div>
 </div>
@@ -256,7 +256,7 @@ var BOOKMARKLET = (function(){
               var ad=await api('/api/customers/'+c.id+'/attachments?page='+ap+'&page_size='+ATT_PAGE_SIZE+'&sort_by=created_at&sort_direction=desc&attachable_type=');
               var at=ad.data||[];
               for(var j=0;j<at.length;j++){var a=at[j];var du=a.download_url||a.attachment_file_url;if(!du)continue;
-                cf.push({aId:a.id||'',fN:a.file_name||a.file_file_name||'file',aT:a.attachable_type||'Unknown',aTypeId:a.attachable_id||'',aUuid:a.attachable_uuid||'',du:du});}
+                cf.push({aId:a.id||'',fN:a.file_name||a.file_file_name||'file',aT:a.attachable_type||'Unknown',aTypeId:a.attachable_id||'',aUuid:a.attachable_uuid||'',du:du,fSize:a.file_file_size||0});}
               if(ap>=(ad.total_pages_count||1))break;ap++;
             }catch(e){break;}}
             if(cf.length>0){buckets.push({cn:cn,cId:c.id,files:cf});totF+=cf.length;}
@@ -273,6 +273,60 @@ var BOOKMARKLET = (function(){
           cb.textContent='Close';window.__hcpExporterRunning=false;clearInterval(keepaliveTimer);return;
         }
 
+        // ── Checkpoint: Show summary and wait for user confirmation ──
+        phase.textContent='SCAN COMPLETE';
+        tF.style.width='40%';
+
+        // Calculate estimated total size from metadata
+        var estTotalBytes=0;
+        var filesWithSize=0;
+        for(var bi=0;bi<buckets.length;bi++){
+          for(var bfi=0;bfi<buckets[bi].files.length;bfi++){
+            if(buckets[bi].files[bfi].fSize>0){estTotalBytes+=buckets[bi].files[bfi].fSize;filesWithSize++;}
+          }
+        }
+        // If some files had size metadata, extrapolate; otherwise estimate 2MB avg
+        if(filesWithSize>0&&filesWithSize<totF){
+          var avgSize=estTotalBytes/filesWithSize;
+          estTotalBytes=Math.round(avgSize*totF);
+        }else if(filesWithSize===0){
+          estTotalBytes=totF*2*1024*1024;
+        }
+        // Estimate download time at ~5MB/s (conservative broadband)
+        var estTimeSec=Math.round(estTotalBytes/(5*1024*1024));
+
+        // Build checkpoint UI
+        var checkHtml='<div style="margin-bottom:14px;font-size:15px;font-weight:600;color:#e2e8f0">Ready to Download</div>';
+        checkHtml+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
+        checkHtml+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px"><div style="font-size:11px;color:#6b7280;margin-bottom:2px">Customers</div><div style="font-size:18px;font-weight:700;color:#e2e8f0">'+buckets.length+'</div></div>';
+        checkHtml+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px"><div style="font-size:11px;color:#6b7280;margin-bottom:2px">Total Files</div><div style="font-size:18px;font-weight:700;color:#e2e8f0">'+totF.toLocaleString()+'</div></div>';
+        checkHtml+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px"><div style="font-size:11px;color:#6b7280;margin-bottom:2px">Estimated Size</div><div style="font-size:18px;font-weight:700;color:#e2e8f0">'+fmtBytes(estTotalBytes)+'</div></div>';
+        checkHtml+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px"><div style="font-size:11px;color:#6b7280;margin-bottom:2px">Estimated Time</div><div style="font-size:18px;font-weight:700;color:#e2e8f0">~'+fmtTime(estTimeSec)+'</div></div>';
+        checkHtml+='</div>';
+        if(skippedCust>0)checkHtml+='<div style="font-size:12px;color:#6b7280;margin-bottom:12px">'+skippedCust+' customers skipped (already downloaded from a previous run)</div>';
+        checkHtml+='<div style="font-size:12px;color:#f59e0b;line-height:1.5;margin-bottom:16px">Make sure you have at least <strong style="color:#fbbf24">'+fmtBytes(Math.round(estTotalBytes*1.1))+'</strong> of free disk space before continuing.</div>';
+        checkHtml+='<div style="display:flex;gap:10px">';
+        checkHtml+='<button id="__hcp_start_dl" style="flex:1;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(79,70,229,0.3)">Start Download</button>';
+        checkHtml+='<button id="__hcp_cancel_dl" style="padding:12px 20px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.05);color:#9ca3af;font-size:14px;font-weight:500;cursor:pointer">Cancel</button>';
+        checkHtml+='</div>';
+
+        det.textContent='';
+        summaryBox.style.display='block';
+        summaryBox.innerHTML=checkHtml;
+
+        // Wait for user to click Start or Cancel
+        var userChoice=await new Promise(function(resolve){
+          document.getElementById('__hcp_start_dl').onclick=function(){resolve('start')};
+          document.getElementById('__hcp_cancel_dl').onclick=function(){resolve('cancel')};
+        });
+
+        if(userChoice==='cancel'){
+          cleanup();return;
+        }
+
+        summaryBox.style.display='none';
+        summaryBox.innerHTML='';
+
         // ── Phase 2: Setup download method ──
         phase.textContent='PHASE 2 OF 3 \u2014 PREPARING DOWNLOAD';
         det.textContent=totF+' attachments across '+buckets.length+' customers.';
@@ -282,7 +336,6 @@ var BOOKMARKLET = (function(){
           det.textContent='Choose a folder to save your export into...';
           dirHandle=await getDir();
           if(!dirHandle){
-            // User cancelled folder picker — fall back to ZIP
             useFS=false;
             det.textContent='Folder selection cancelled. Falling back to ZIP downloads...';
             await sleep(1000);
@@ -511,6 +564,35 @@ var BOOKMARKLET = (function(){
           for(var ri=0;ri<custResults.length;ri++){if(custResults[ri].fail>0)sh+='<div style="margin-bottom:2px">'+custResults[ri].name+' \u2014 '+custResults[ri].fail+'/'+custResults[ri].total+' failed</div>';}
           sh+='</div>';
         }else{sh+='<div style="font-size:12px;color:#34d399">\u2713 All files downloaded successfully.</div>';}
+
+        // Next steps: how to zip and send
+        if(useFS){
+          var isMac=/Mac|iPhone|iPad/.test(navigator.userAgent);
+          var isWin=/Win/.test(navigator.userAgent);
+          sh+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06)">';
+          sh+='<div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:8px">\ud83d\udce6 Next Step: Zip and Send</div>';
+          if(isMac){
+            sh+='<div style="font-size:12px;color:#9ca3af;line-height:1.6">';
+            sh+='1. Open <strong style="color:#cbd5e1">Finder</strong> and go to where you saved the export folder<br>';
+            sh+='2. <strong style="color:#cbd5e1">Right-click</strong> the <strong style="color:#a78bfa">HCP_Export</strong> folder<br>';
+            sh+='3. Click <strong style="color:#cbd5e1">"Compress"</strong><br>';
+            sh+='4. A .zip file will appear next to the folder \u2014 send that file to your migration contact</div>';
+          }else if(isWin){
+            sh+='<div style="font-size:12px;color:#9ca3af;line-height:1.6">';
+            sh+='1. Open <strong style="color:#cbd5e1">File Explorer</strong> and go to where you saved the export folder<br>';
+            sh+='2. <strong style="color:#cbd5e1">Right-click</strong> the <strong style="color:#a78bfa">HCP_Export</strong> folder<br>';
+            sh+='3. Click <strong style="color:#cbd5e1">"Compress to ZIP file"</strong><br>';
+            sh+='4. A .zip file will appear next to the folder \u2014 send that file to your migration contact</div>';
+          }else{
+            sh+='<div style="font-size:12px;color:#9ca3af;line-height:1.6">';
+            sh+='1. Find the <strong style="color:#a78bfa">HCP_Export</strong> folder where you saved it<br>';
+            sh+='2. <strong style="color:#cbd5e1">Right-click</strong> the folder and choose <strong style="color:#cbd5e1">"Compress"</strong> or <strong style="color:#cbd5e1">"Send to \u2192 Compressed folder"</strong><br>';
+            sh+='3. Send the resulting .zip file to your migration contact</div>';
+          }
+          sh+='<div style="font-size:11px;color:#4b5563;margin-top:8px">\ud83d\udca1 Tip: If the folder is very large, you can also share it via Google Drive or Dropbox instead of zipping.</div>';
+          sh+='</div>';
+        }
+
         summaryBox.innerHTML=sh;
 
         det.textContent=(dl-er)+' files ('+fmtBytes(totalBytes)+') in '+totalElapsed;

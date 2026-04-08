@@ -4,14 +4,15 @@ A browser-based tool that bulk-downloads every customer photo, document, and att
 
 ## How It Works
 
-The tool uses a **bookmarklet** — a small script saved as a browser bookmark. When clicked while logged into HouseCallPro, it runs directly in the browser using the user's existing authenticated session. It hits HCP's internal APIs to paginate through all customers, collects every attachment URL, and downloads all files directly to a folder on the user's computer.
+The tool uses a **bookmarklet** — a small script saved as a browser bookmark. When clicked while logged into HouseCallPro, it runs directly in the browser using the user's existing authenticated session. It hits HCP's internal APIs to scan all customers, shows the user exactly how much data will be downloaded, then saves everything directly to a folder on their computer.
 
 **No backend. No data leaves the browser. No software to install.**
 
 ## Features
 
-- **Stream-to-disk** — Files download directly to a folder on the user's computer via the File System Access API. No memory limits, handles accounts with tens of thousands of files and tens of GBs without issues
-- **6x parallel downloads** — Downloads 6 files simultaneously, reducing export time by roughly 5-6x compared to sequential. A 10,000-image account takes ~8-12 minutes instead of ~45-60
+- **Stream-to-disk** — Files download directly to a folder on the user's computer via the File System Access API. No memory limits, handles accounts with tens of thousands of files and tens of GBs
+- **Pre-download checkpoint** — After scanning, shows the user total customers, total files, estimated size, estimated time, and minimum disk space needed. The user confirms before any files are downloaded
+- **6x parallel downloads** — Downloads 6 files simultaneously, reducing export time by roughly 5-6x compared to sequential
 - **ZIP fallback** — Browsers that don't support direct folder access (Safari, Firefox) automatically fall back to chunked ZIP downloads at 800MB per ZIP with customer-boundary chunking
 - **Session keepalive** — Pings HCP every 2 minutes to prevent session timeout during long exports
 - **Deduplication** — Tracks completed customers in the browser session. If the export is interrupted and re-run, already-downloaded customers are skipped automatically
@@ -19,7 +20,28 @@ The tool uses a **bookmarklet** — a small script saved as a browser bookmark. 
 - **Time estimation** — Live countdown based on actual download throughput, updated in real time
 - **Job/Estimate/Equipment ID mapping** — Each attachment is linked back to its parent record with separate ID columns for Jobs, Estimates, and Equipment
 - **Verification summary** — On completion, shows download mode, total files, total size, errors, elapsed time, and lists any customers with failures
+- **Post-export instructions** — OS-specific instructions for zipping and sending the export folder (Mac and Windows), with Google Drive/Dropbox suggested for very large exports
 - **Excel + CSV export** — Generates both an `.xlsx` workbook and a `.csv` log file with full mapping data
+
+## User Flow
+
+```
+1. Enter access code
+2. Drag bookmarklet to bookmarks bar
+3. Log into HouseCallPro
+4. Click bookmarklet
+5. Phase 1: Scan (automatic)
+   └─ Scans all customers and attachment metadata
+6. Checkpoint: Review before downloading
+   ├─ Shows: customers, files, estimated size, estimated time
+   ├─ Shows: minimum disk space needed
+   └─ User clicks "Start Download" or "Cancel"
+7. Choose folder (Chrome/Edge) or wait for ZIPs (Safari/Firefox)
+8. Phase 3: Download (6x parallel)
+   └─ Live progress: files, bytes, time remaining, errors
+9. Reports generated (Excel + CSV)
+10. Verification summary + zip/send instructions
+```
 
 ## Download Modes
 
@@ -29,8 +51,6 @@ The tool automatically selects the best download method based on browser capabil
 |------|---------|-------------|------------|
 | **Direct to folder** (default) | Chrome, Edge | User picks a folder, files stream directly to disk | None |
 | **ZIP fallback** | Safari, Firefox | Chunked ZIP downloads, 800MB per ZIP, customers never split | ~800MB per ZIP |
-
-The user doesn't choose — the tool detects and picks the best option automatically.
 
 ## Output
 
@@ -64,7 +84,7 @@ Each ZIP contains a per-ZIP CSV log (`_download_log_partN.csv`). A master CSV an
 
 ## Performance
 
-Estimated times for 10,000 images (varies by file size and internet speed):
+Estimated times for 10,000 images with 6x parallel downloads:
 
 | Average file size | Total data | ~50 Mbps connection | ~100 Mbps connection |
 |---|---|---|---|
@@ -92,9 +112,12 @@ For production use, replace the client-side array with a server-side validation 
 2. Drag the **"Export HCP Attachments"** button to the browser bookmarks bar
 3. Log into [pro.housecallpro.com](https://pro.housecallpro.com) in the same browser
 4. Click the bookmarklet from the bookmarks bar
-5. Choose a folder when prompted (Chrome/Edge) — or wait for ZIP downloads (Safari/Firefox)
-6. Wait for the export to complete
-7. Send the export folder (zipped) or ZIP files to the migration team
+5. Wait for the scan to complete
+6. Review the summary — check disk space
+7. Click **"Start Download"**
+8. Choose a folder when prompted (Chrome/Edge)
+9. Wait for the export to complete
+10. Follow the on-screen instructions to zip and send the folder
 
 ## Technical Details
 
@@ -103,7 +126,7 @@ For production use, replace the client-side array with a server-side validation 
 | Endpoint | Purpose |
 |----------|---------|
 | `GET /alpha/customers?page=N&page_size=100` | Paginate all customers |
-| `GET /api/customers/{id}/attachments?page=N&page_size=100` | List attachments per customer |
+| `GET /api/customers/{id}/attachments?page=N&page_size=100` | List attachments per customer (includes `file_file_size` for size estimation) |
 | `GET /api/v2/organization` | Session keepalive ping |
 | S3 pre-signed URLs (from attachment response) | Direct file download (6 concurrent) |
 
@@ -125,6 +148,12 @@ Bookmarklet runs on pro.housecallpro.com (same-origin)
   ├─ Phase 1: Sequential scan
   │   └─ GET /alpha/customers → GET /api/customers/{id}/attachments
   │       (checks sessionStorage for dedup, skips completed customers)
+  │       (collects file_file_size for size estimation)
+  │
+  ├─ Checkpoint: User confirmation
+  │   ├─ Shows customers, files, estimated size, estimated time
+  │   ├─ Shows minimum disk space required (estimate + 10%)
+  │   └─ Waits for "Start Download" or "Cancel"
   │
   ├─ Phase 2: Setup
   │   ├─ File System Access API → folder picker (Chrome/Edge)
@@ -139,18 +168,27 @@ Bookmarklet runs on pro.housecallpro.com (same-origin)
   └─ Phase 4: Generate reports
       ├─ Excel (.xlsx) — 3 sheets
       ├─ CSV — master log
-      └─ Save to export folder or trigger browser download
+      ├─ Save to export folder or trigger browser download
+      └─ Show verification summary + OS-specific zip instructions
 ```
 
 ## Limitations
 
 - Requires an active HouseCallPro login session in the same browser
-- S3 pre-signed URLs expire after 1 hour — very large accounts (50,000+ files) with slow connections may see expiration errors on later files; re-running skips completed customers and retries failures
-- ZIP fallback uses a 2MB-per-file size estimate for chunking decisions since actual file sizes aren't known until download
+- S3 pre-signed URLs expire after 1 hour — very large accounts with slow connections may see expiration errors; re-running skips completed customers and retries failures
+- Size estimation uses `file_file_size` metadata when available, falls back to 2MB average when not
+- ZIP fallback uses a 2MB-per-file size estimate for chunking decisions
 - Access codes are stored client-side
 - If HouseCallPro changes their internal API endpoints, the bookmarklet will need updating
 
 ## Changelog
+
+### v3.1
+- Pre-download checkpoint screen with file count, size estimate, time estimate, and disk space warning
+- User must confirm before any files are downloaded
+- Size estimation uses actual `file_file_size` metadata from HCP attachment records
+- OS-specific post-export instructions for zipping (Mac: Finder → Compress, Windows: Explorer → Compress to ZIP file)
+- Google Drive / Dropbox suggested as alternative for very large exports
 
 ### v3.0
 - Stream-to-disk as default download method (File System Access API)
