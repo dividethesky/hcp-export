@@ -8,7 +8,7 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   ::selection { background: rgba(99,102,241,0.3); }
-  body { min-height: 100vh; background: radial-gradient(ellipse at 30% 20%, #0c1222 0%, #060a12 50%, #000000 100%); font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif; color: #d1d5db; -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; background: radial-gradient(ellipse at 30% 20%, #0c1222 0%, #060a12 50%, #000 100%); font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif; color: #d1d5db; -webkit-font-smoothing: antialiased; }
   @keyframes fade-up { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
   @keyframes pulse-border { 0%,100%{border-color:rgba(99,102,241,0.3)} 50%{border-color:rgba(99,102,241,0.6)} }
@@ -41,7 +41,7 @@
   .step-card a { color: #818cf8; text-decoration: underline; text-underline-offset: 3px }
   .step-card code { background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: #94a3b8 }
   .bm-row { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin: 16px 0 12px }
-  #bookmarklet { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; color: #fff; background: linear-gradient(135deg, #4338ca, #6366f1); text-decoration: none; cursor: grab; border: 2px solid rgba(99,102,241,0.3); box-shadow: 0 4px 20px rgba(79,70,229,0.25), inset 0 1px 0 rgba(255,255,255,0.1); animation: pulse-border 2.5s ease-in-out infinite; user-select: none; -webkit-user-select: none }
+  #bookmarklet { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; color: #fff; background: linear-gradient(135deg, #4338ca, #6366f1); text-decoration: none; cursor: grab; border: 2px solid rgba(99,102,241,0.3); box-shadow: 0 4px 20px rgba(79,70,229,0.25), inset 0 1px 0 rgba(255,255,255,0.1); animation: pulse-border 2.5s ease-in-out infinite; user-select: none }
   #bookmarklet:active { cursor: grabbing }
   .bm-hint { color: #475569; font-size: 11px }
   #copy-btn { background: transparent; border: 1px solid rgba(255,255,255,0.06); color: #475569; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s; font-family: inherit }
@@ -63,7 +63,6 @@
 </style>
 </head>
 <body>
-
 <div id="gate">
   <div class="gate-card" id="gate-card">
     <div class="badge"><div class="badge-dot"></div><span class="badge-text">Data Migration Tool</span></div>
@@ -75,7 +74,6 @@
     <p class="gate-footer">Don't have a code? Reach out to the person who shared this tool with you.</p>
   </div>
 </div>
-
 <div id="tool">
   <div class="container">
     <div class="header fade-up">
@@ -87,557 +85,57 @@
       <div class="step-num">1</div>
       <div>
         <h3>Save the Export button to your bookmarks</h3>
-        <p>Drag the button below into your bookmarks bar. If your bookmarks bar is hidden, press <code>Ctrl+Shift+B</code> (Win) or <code>⌘+Shift+B</code> (Mac) to show it.</p>
+        <p>Drag the button below into your bookmarks bar. If your bookmarks bar is hidden, press <code>Ctrl+Shift+B</code> (Win) or <code>&#8984;+Shift+B</code> (Mac) to show it.</p>
         <div class="bm-row">
           <a id="bookmarklet" href="#" onclick="return false" draggable="true">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Export HCP Attachments
           </a>
-          <span class="bm-hint">← drag to bookmarks bar</span>
+          <span class="bm-hint">&#8592; drag to bookmarks bar</span>
         </div>
-        <button id="copy-btn" onclick="copyBookmarklet()">Can't drag? Copy code manually →</button>
+        <button id="copy-btn" onclick="copyBookmarklet()">Can't drag? Copy code &#8594;</button>
       </div>
     </div>
     <div class="step-card fade-up" style="animation-delay:0.2s">
       <div class="step-num">2</div>
-      <div>
-        <h3>Log into HouseCallPro</h3>
-        <p>Go to <a href="https://pro.housecallpro.com" target="_blank" rel="noopener noreferrer">pro.housecallpro.com</a> and sign in to your account as usual. Any page will work.</p>
-      </div>
+      <div><h3>Log into HouseCallPro</h3><p>Go to <a href="https://pro.housecallpro.com" target="_blank" rel="noopener noreferrer">pro.housecallpro.com</a> and sign in. Any page will work.</p></div>
     </div>
     <div class="step-card fade-up" style="animation-delay:0.3s">
       <div class="step-num">3</div>
-      <div>
-        <h3>Click the bookmark and wait</h3>
-        <p>Click <strong>"Export HCP Attachments"</strong> in your bookmarks bar. You'll be asked to choose a folder to save files into. The tool downloads everything directly to that folder, organized by customer and job. If you run it again, already-completed customers are skipped automatically.</p>
-      </div>
+      <div><h3>Click the bookmark and wait</h3><p>Click <strong>"Export HCP Attachments"</strong> in your bookmarks bar. You'll see a scan of your account, then choose a folder to save into. Already-completed customers are skipped on re-run.</p></div>
     </div>
     <div class="info-grid fade-up" style="animation-delay:0.4s">
-      <div class="info-card"><div class="icon">⏱</div><div class="label">~5 min</div><div class="desc">per 1,000 images</div></div>
-      <div class="info-card"><div class="icon">🔒</div><div class="label">100% local</div><div class="desc">nothing leaves your browser</div></div>
-      <div class="info-card"><div class="icon">📂</div><div class="label">Direct to disk</div><div class="desc">no memory limits</div></div>
-      <div class="info-card"><div class="icon">📋</div><div class="label">Excel + CSV log</div><div class="desc">full audit trail included</div></div>
+      <div class="info-card"><div class="icon">&#9201;</div><div class="label">~5 min</div><div class="desc">per 1,000 images</div></div>
+      <div class="info-card"><div class="icon">&#128274;</div><div class="label">100% local</div><div class="desc">nothing leaves your browser</div></div>
+      <div class="info-card"><div class="icon">&#128194;</div><div class="label">Direct to disk</div><div class="desc">no memory limits</div></div>
+      <div class="info-card"><div class="icon">&#128203;</div><div class="label">Excel + CSV log</div><div class="desc">full audit trail included</div></div>
     </div>
     <div class="faq fade-up" style="animation-delay:0.5s">
       <h3>Frequently Asked Questions</h3>
-      <div class="faq-item"><div class="q">What if my browser crashes or I close the tab?</div><div class="a">Just run the bookmarklet again. It automatically skips customers that were already fully downloaded, so you won't get duplicates.</div></div>
-      <div class="faq-item"><div class="q">Why is it asking me to choose a folder?</div><div class="a">Files are saved directly to your computer as they download, instead of being held in browser memory. This means there's no size limit — even accounts with tens of thousands of photos will work without issues.</div></div>
-      <div class="faq-item"><div class="q">Does this send my data anywhere?</div><div class="a">No. Everything runs inside your browser. Files download directly from HouseCallPro's servers to your computer. No third-party servers are involved.</div></div>
-      <div class="faq-item"><div class="q">What browser should I use?</div><div class="a">Google Chrome or Microsoft Edge. These browsers support saving directly to a folder. Safari and Firefox will fall back to ZIP file downloads.</div></div>
-      <div class="faq-item"><div class="q">What do I do with the exported folder?</div><div class="a">Zip the folder and send it to the person helping with your data migration, or share it via Google Drive or Dropbox.</div></div>
+      <div class="faq-item"><div class="q">What if my browser crashes?</div><div class="a">Run it again. It skips already-downloaded customers automatically.</div></div>
+      <div class="faq-item"><div class="q">Why choose a folder?</div><div class="a">Files save directly to disk. No size limit, even tens of thousands of photos.</div></div>
+      <div class="faq-item"><div class="q">Does this send my data anywhere?</div><div class="a">No. Everything runs in your browser. No third-party servers.</div></div>
+      <div class="faq-item"><div class="q">What browser?</div><div class="a">Chrome or Edge. Safari/Firefox fall back to ZIP downloads.</div></div>
+      <div class="faq-item"><div class="q">What do I do with the folder?</div><div class="a">Zip it and send to your migration contact, or share via Google Drive/Dropbox.</div></div>
     </div>
     <div class="footer fade-up" style="animation-delay:0.6s">
-      Access code: <code id="footer-code"></code>
-      · <button id="signout-btn" onclick="signOut()">Sign out</button>
+      Access code: <code id="footer-code"></code> &#183; <button id="signout-btn" onclick="signOut()">Sign out</button>
     </div>
   </div>
 </div>
-
 <script>
-var VALID = [
-  "TestExport311",
-  "HCP-EX-7f3a9b2c","HCP-EX-4e8d1f6a","HCP-EX-9c2b5e8d",
-  "HCP-EX-1a7f3c9e","HCP-EX-6d4b8a2f","HCP-EX-3e9c1d7b",
-  "HCP-EX-8b5a2f4e","HCP-EX-2c7d9a1f","HCP-EX-5f3b8c6d","HCP-EX-0a4e7d9c"
-];
-
-var BOOKMARKLET = (function(){
-  var fn = function(){
-    if(!window.location.hostname.includes('housecallpro.com')){alert('Please run this from your HouseCallPro account!\nGo to pro.housecallpro.com first.');return;}
-    if(window.__hcpExporterRunning){alert('Export is already running!');return;}
-    window.__hcpExporterRunning=true;
-
-    var PAGE_SIZE=100,ATT_PAGE_SIZE=100,DELAY=300,RETRY_MAX=2,RETRY_DELAY=2000,KEEPALIVE_MS=120000;
-    // ZIP fallback config
-    var MAX_ZIP_BYTES=800*1024*1024; // 800MB per ZIP
-
-    // Session keepalive
-    var keepaliveTimer=setInterval(function(){
-      fetch('/api/v2/organization',{credentials:'include',headers:{accept:'application/json'}}).catch(function(){});
-    },KEEPALIVE_MS);
-
-    // Dedup
-    var DEDUP_KEY='__hcp_export_done';
-    function getCompleted(){try{return JSON.parse(sessionStorage.getItem(DEDUP_KEY)||'{}');}catch(e){return {};}}
-    function markCompleted(cid){var d=getCompleted();d[cid]=Date.now();sessionStorage.setItem(DEDUP_KEY,JSON.stringify(d));}
-    function isCompleted(cid){return !!getCompleted()[cid];}
-
-    // UI
-    var overlay=document.createElement('div');
-    overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(8,8,18,0.92);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,sans-serif;backdrop-filter:blur(4px)';
-    var box=document.createElement('div');
-    box.style.cssText='background:linear-gradient(145deg,#111827,#0f172a);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:44px;max-width:560px;width:92%;color:#d1d5db;box-shadow:0 30px 80px rgba(0,0,0,0.6)';
-    function el(t,s,x){var e=document.createElement(t);if(s)e.style.cssText=s;if(x)e.textContent=x;return e;}
-    var title=el('h2','margin:0 0 6px 0;color:#f9fafb;font-size:18px;font-weight:700','HouseCallPro Attachment Export');
-    var phase=el('p','margin:0 0 20px 0;color:#6b7280;font-size:12px;font-weight:500;letter-spacing:0.3px;text-transform:uppercase','Initializing...');
-    var tO=el('div','background:#1f2937;border-radius:10px;height:20px;overflow:hidden;margin-bottom:10px');
-    var tF=el('div','background:linear-gradient(90deg,#6366f1,#8b5cf6,#a78bfa);height:100%;width:0%;transition:width 0.4s ease;border-radius:10px');
-    tO.appendChild(tF);
-    var sts=el('div','display:flex;gap:16px;margin-bottom:4px;flex-wrap:wrap');
-    var sF=el('span','font-size:13px;color:#9ca3af','0 files');
-    var sE=el('span','font-size:13px;color:#9ca3af','0 errors');
-    var sZ=el('span','font-size:13px;color:#9ca3af','');
-    var sT=el('span','font-size:13px;color:#9ca3af','');
-    sts.appendChild(sF);sts.appendChild(sE);sts.appendChild(sZ);sts.appendChild(sT);
-    var det=el('p','margin:0 0 20px 0;font-size:12px;color:#4b5563;min-height:18px','');
-    var summaryBox=el('div','display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:16px;margin-bottom:20px;font-size:13px','');
-    var br=el('div','display:flex;gap:10px');
-    var cb=el('button','background:rgba(255,255,255,0.05);color:#9ca3af;border:1px solid rgba(255,255,255,0.08);padding:9px 22px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500','Cancel');
-    br.appendChild(cb);
-    box.appendChild(title);box.appendChild(phase);box.appendChild(tO);box.appendChild(sts);box.appendChild(det);box.appendChild(summaryBox);box.appendChild(br);
-    overlay.appendChild(box);document.body.appendChild(overlay);
-    var cancelled=false;
-    function cleanup(){cancelled=true;clearInterval(keepaliveTimer);window.__hcpExporterRunning=false;overlay.remove();}
-    cb.onclick=cleanup;
-
-    function sleep(ms){return new Promise(function(r){setTimeout(r,ms)});}
-    function pct(n,t){return Math.round(n/Math.max(t,1)*100);}
-    function fmtTime(s){if(s<60)return s+'s';return Math.floor(s/60)+'m '+(s%60)+'s';}
-    function fmtBytes(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';if(b<1073741824)return(b/1048576).toFixed(1)+' MB';return(b/1073741824).toFixed(2)+' GB';}
-    function getCSRF(){var m=document.querySelector('meta[name="csrf-token"]');if(m)return m.getAttribute('content');var ck=document.cookie.split(';');for(var i=0;i<ck.length;i++){var c=ck[i].trim();if(c.toLowerCase().indexOf('csrf')===0)return c.split('=')[1];}return '';}
-    async function api(url){var h={accept:'application/json'};var csrf=getCSRF();if(csrf)h['x-csrf-token']=csrf;var r=await fetch(url,{credentials:'include',headers:h});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
-    async function dlB(url,retries){retries=retries||0;try{var r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);return r.blob();}catch(e){if(retries<RETRY_MAX){await sleep(RETRY_DELAY);return dlB(url,retries+1);}throw e;}}
-    function safe(s,m){return(s||'unnamed').replace(/[^a-zA-Z0-9 ._-]/g,'_').substring(0,m||60);}
-
-    // Check File System Access API support
-    var useFS=!!window.showDirectoryPicker;
-
-    async function getDir(){
-      try{
-        var dh=await window.showDirectoryPicker({mode:'readwrite',startIn:'desktop'});
-        // Create export subfolder
-        var exportDir=await dh.getDirectoryHandle('HCP_Export_'+(new Date().toISOString().slice(0,10)),{create:true});
-        return exportDir;
-      }catch(e){return null;}
-    }
-
-    async function writeFileToDir(dirHandle,pathParts,blob){
-      // pathParts = ['CustomerName_id','Job_12345','photo.jpg']
-      var current=dirHandle;
-      for(var i=0;i<pathParts.length-1;i++){
-        current=await current.getDirectoryHandle(pathParts[i],{create:true});
-      }
-      var fileHandle=await current.getFileHandle(pathParts[pathParts.length-1],{create:true});
-      var writable=await fileHandle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-    }
-
-    async function writeTextToDir(dirHandle,fileName,text){
-      var fh=await dirHandle.getFileHandle(fileName,{create:true});
-      var w=await fh.createWritable();
-      await w.write(text);
-      await w.close();
-    }
-
-    async function run(){
-      try{
-        // ── Phase 1: Scan ──
-        phase.textContent='PHASE 1 OF 3 \u2014 SCANNING CUSTOMERS';
-        var f1=await api('/alpha/customers?page=1&page_size=1&contractor=false');
-        var tC=f1.total_count||0;
-        det.textContent='Found '+tC+' customers';
-        await sleep(400);
-
-        var buckets=[],totF=0,skippedCust=0,pg=1,cD=0;
-        while(!cancelled){
-          var cd=await api('/alpha/customers?page='+pg+'&page_size='+PAGE_SIZE+'&contractor=false');
-          var cs=cd.data||[];if(!cs.length)break;
-          var tP=cd.total_pages_count||1;
-          for(var i=0;i<cs.length;i++){
-            if(cancelled)return;cD++;
-            var c=cs[i];
-            var cn=((c.first_name||'')+' '+(c.last_name||'')).trim()||c.display_name||'Unknown';
-            tF.style.width=pct(cD,tC)*0.4+'%';
-            det.textContent='Scanning: '+cn+' ('+cD+'/'+tC+')';
-            if(isCompleted(c.id)){skippedCust++;sF.textContent=totF+' files found ('+skippedCust+' skipped)';await sleep(50);continue;}
-            var cf=[],ap=1;
-            while(true){try{
-              var ad=await api('/api/customers/'+c.id+'/attachments?page='+ap+'&page_size='+ATT_PAGE_SIZE+'&sort_by=created_at&sort_direction=desc&attachable_type=');
-              var at=ad.data||[];
-              for(var j=0;j<at.length;j++){var a=at[j];var du=a.download_url||a.attachment_file_url;if(!du)continue;
-                cf.push({aId:a.id||'',fN:a.file_name||a.file_file_name||'file',aT:a.attachable_type||'Unknown',aTypeId:a.attachable_id||'',aUuid:a.attachable_uuid||'',du:du,fSize:a.file_file_size||0});}
-              if(ap>=(ad.total_pages_count||1))break;ap++;
-            }catch(e){break;}}
-            if(cf.length>0){buckets.push({cn:cn,cId:c.id,files:cf});totF+=cf.length;}
-            sF.textContent=totF+' files found'+(skippedCust?' ('+skippedCust+' skipped)':'');
-            await sleep(50);
-          }
-          if(pg>=tP)break;pg++;
-        }
-        if(cancelled)return;
-        if(!totF){
-          phase.textContent='COMPLETE \u2014 NO NEW ATTACHMENTS';
-          det.textContent=skippedCust?skippedCust+' customers already downloaded.':'No attachments found.';
-          tF.style.width='100%';tF.style.background='linear-gradient(90deg,#f59e0b,#eab308)';
-          cb.textContent='Close';window.__hcpExporterRunning=false;clearInterval(keepaliveTimer);return;
-        }
-
-        // ── Checkpoint: Show summary and wait for user confirmation ──
-        phase.textContent='SCAN COMPLETE';
-        tF.style.width='40%';
-
-        // Calculate estimated total size from metadata
-        var estTotalBytes=0;
-        var filesWithSize=0;
-        for(var bi=0;bi<buckets.length;bi++){
-          for(var bfi=0;bfi<buckets[bi].files.length;bfi++){
-            if(buckets[bi].files[bfi].fSize>0){estTotalBytes+=buckets[bi].files[bfi].fSize;filesWithSize++;}
-          }
-        }
-        // If some files had size metadata, extrapolate; otherwise estimate 2MB avg
-        if(filesWithSize>0&&filesWithSize<totF){
-          var avgSize=estTotalBytes/filesWithSize;
-          estTotalBytes=Math.round(avgSize*totF);
-        }else if(filesWithSize===0){
-          estTotalBytes=totF*2*1024*1024;
-        }
-        // Estimate download time at ~5MB/s (conservative broadband)
-        var estTimeSec=Math.round(estTotalBytes/(5*1024*1024));
-
-        // Build checkpoint UI
-        var checkHtml='<div style="margin-bottom:14px;font-size:15px;font-weight:600;color:#e2e8f0">Ready to Download</div>';
-        checkHtml+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
-        checkHtml+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px"><div style="font-size:11px;color:#6b7280;margin-bottom:2px">Customers</div><div style="font-size:18px;font-weight:700;color:#e2e8f0">'+buckets.length+'</div></div>';
-        checkHtml+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px"><div style="font-size:11px;color:#6b7280;margin-bottom:2px">Total Files</div><div style="font-size:18px;font-weight:700;color:#e2e8f0">'+totF.toLocaleString()+'</div></div>';
-        checkHtml+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px"><div style="font-size:11px;color:#6b7280;margin-bottom:2px">Estimated Size</div><div style="font-size:18px;font-weight:700;color:#e2e8f0">'+fmtBytes(estTotalBytes)+'</div></div>';
-        checkHtml+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px"><div style="font-size:11px;color:#6b7280;margin-bottom:2px">Estimated Time</div><div style="font-size:18px;font-weight:700;color:#e2e8f0">~'+fmtTime(estTimeSec)+'</div></div>';
-        checkHtml+='</div>';
-        if(skippedCust>0)checkHtml+='<div style="font-size:12px;color:#6b7280;margin-bottom:12px">'+skippedCust+' customers skipped (already downloaded from a previous run)</div>';
-        checkHtml+='<div style="font-size:12px;color:#f59e0b;line-height:1.5;margin-bottom:16px">Make sure you have at least <strong style="color:#fbbf24">'+fmtBytes(Math.round(estTotalBytes*1.1))+'</strong> of free disk space before continuing.</div>';
-        checkHtml+='<div style="display:flex;gap:10px">';
-        checkHtml+='<button id="__hcp_start_dl" style="flex:1;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(79,70,229,0.3)">Start Download</button>';
-        checkHtml+='<button id="__hcp_cancel_dl" style="padding:12px 20px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.05);color:#9ca3af;font-size:14px;font-weight:500;cursor:pointer">Cancel</button>';
-        checkHtml+='</div>';
-
-        det.textContent='';
-        summaryBox.style.display='block';
-        summaryBox.innerHTML=checkHtml;
-
-        // Wait for user to click Start or Cancel
-        var userChoice=await new Promise(function(resolve){
-          document.getElementById('__hcp_start_dl').onclick=function(){resolve('start')};
-          document.getElementById('__hcp_cancel_dl').onclick=function(){resolve('cancel')};
-        });
-
-        if(userChoice==='cancel'){
-          cleanup();return;
-        }
-
-        summaryBox.style.display='none';
-        summaryBox.innerHTML='';
-
-        // ── Phase 2: Setup download method ──
-        phase.textContent='PHASE 2 OF 3 \u2014 PREPARING DOWNLOAD';
-        det.textContent=totF+' attachments across '+buckets.length+' customers.';
-
-        var dirHandle=null;
-        if(useFS){
-          det.textContent='Choose a folder to save your export into...';
-          dirHandle=await getDir();
-          if(!dirHandle){
-            useFS=false;
-            det.textContent='Folder selection cancelled. Falling back to ZIP downloads...';
-            await sleep(1000);
-          }else{
-            sZ.textContent='\ud83d\udcc2 Saving to folder';
-            det.textContent='Folder selected. Loading libraries...';
-          }
-        }
-
-        if(!useFS){
-          sZ.textContent='ZIP mode';
-          det.textContent='Loading ZIP library...';
-        }
-
-        // Load JSZip (needed for ZIP fallback + always for per-customer backup)
-        var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';document.head.appendChild(sc);
-        await new Promise(function(ok,fl){sc.onload=ok;sc.onerror=function(){fl(new Error('Failed to load JSZip'))};});
-
-        // Load SheetJS for Excel
-        var sc2=document.createElement('script');sc2.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';document.head.appendChild(sc2);
-        await new Promise(function(ok,fl){sc2.onload=ok;sc2.onerror=function(){fl(new Error('Failed to load SheetJS'))};});
-        await sleep(300);
-
-        // ── Phase 3: Download ──
-        phase.textContent='PHASE 3 OF 3 \u2014 DOWNLOADING';
-        var CONCURRENCY=6;
-        var dl=0,er=0,totalBytes=0,dlStartTime=Date.now(),ds=new Date().toISOString().slice(0,10);
-        var csvHeader='customer_id,customer_name,attachment_id,file_name,job_id,estimate_id,equipment_id,attachable_type,file_path,status';
-        var masterCsv=[csvHeader];
-        var masterRows=[];
-        var custResults=[];
-
-        // ZIP fallback state
-        var zip=null,zC=0,zipBytes=0,zipCsv=null;
-        if(!useFS){zip=new JSZip();zipCsv=[csvHeader];}
-
-        async function flushZip(){
-          if(!zip)return;
-          zC++;
-          var zN='HCP_Attachments_part'+zC+'_'+ds+'.zip';
-          zip.file('_download_log_part'+zC+'.csv',zipCsv.join('\n'));
-          det.textContent='Compressing ZIP '+zC+'...';
-          var ct=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:3}});
-          var a=document.createElement('a');a.href=URL.createObjectURL(ct);a.download=zN;a.click();URL.revokeObjectURL(a.href);
-          det.textContent='ZIP '+zC+' downloaded!';
-          await sleep(800);
-          zip=new JSZip();zipBytes=0;zipCsv=[csvHeader];
-        }
-
-        function updateProgress(currentFile){
-          var elapsed=(Date.now()-dlStartTime)/1000;
-          var done=dl-er;
-          var rate=done/Math.max(elapsed,1);
-          var remaining=Math.round((totF-dl)/Math.max(rate,0.1));
-          sT.textContent='\u23f1 '+fmtTime(remaining)+' left';
-          tF.style.width=(40+pct(dl,totF)*0.55)+'%';
-          if(currentFile)det.textContent=currentFile+' ('+dl+'/'+totF+')';
-          sF.textContent=done+' downloaded ('+fmtBytes(totalBytes)+')';
-          sE.textContent=er>0?er+' errors':'';
-        }
-
-        // Parallel download helper — processes an array of file tasks with N concurrency
-        // Each task: {ff, fo, bkCId, bkCn}
-        // Returns: {ok: count, er: count, bytes: count, results: [{row, masterRow, ok}]}
-        async function downloadBatch(tasks){
-          var results=[];
-          var idx=0;
-          var batchOk=0,batchEr=0,batchBytes=0;
-
-          async function worker(){
-            while(idx<tasks.length){
-              if(cancelled)return;
-              var ti=idx++;
-              if(ti>=tasks.length)return;
-              var t=tasks[ti];
-              var ff=t.ff,fo=t.fo,bkCId=t.bkCId,bkCn=t.bkCn;
-
-              var subFolder=ff.aT+'_'+(ff.aUuid?ff.aUuid.slice(-8):(ff.aTypeId?String(ff.aTypeId).slice(-8):''));
-              var fName=(ff.aId?ff.aId.slice(-8)+'_':'')+safe(ff.fN,80);
-              var pathParts=[fo,subFolder,fName];
-              var fpStr=pathParts.join('/');
-              var jobId=ff.aT==='Job'?String(ff.aTypeId):'';
-              var estId=ff.aT==='Estimate'?String(ff.aTypeId):'';
-              var eqId=ff.aT==='Equipment'?String(ff.aTypeId):'';
-
-              dl++;
-              updateProgress(bkCn+' \u2014 '+ff.fN);
-
-              try{
-                var bl=await dlB(ff.du);
-                var bSize=bl.size||0;
-                totalBytes+=bSize;batchBytes+=bSize;
-
-                if(useFS){
-                  await writeFileToDir(dirHandle,pathParts,bl);
-                }else{
-                  zip.file(fpStr,bl);
-                  zipBytes+=bSize;
-                }
-                batchOk++;
-                var row='"'+bkCId+'","'+bkCn+'","'+ff.aId+'","'+ff.fN+'","'+jobId+'","'+estId+'","'+eqId+'","'+ff.aT+'","'+fpStr+'","success"';
-                results.push({row:row,masterRow:{customer_id:bkCId,customer_name:bkCn,attachment_id:ff.aId,file_name:ff.fN,job_id:jobId,estimate_id:estId,equipment_id:eqId,attachable_type:ff.aT,file_path:fpStr,status:'success'},ok:true});
-              }catch(e){
-                er++;dl--;batchEr++;
-                var row='"'+bkCId+'","'+bkCn+'","'+ff.aId+'","'+ff.fN+'","'+jobId+'","'+estId+'","'+eqId+'","'+ff.aT+'","'+fpStr+'","error:'+e.message.substring(0,40)+'"';
-                results.push({row:row,masterRow:{customer_id:bkCId,customer_name:bkCn,attachment_id:ff.aId,file_name:ff.fN,job_id:jobId,estimate_id:estId,equipment_id:eqId,attachable_type:ff.aT,file_path:fpStr,status:'error: '+e.message.substring(0,40)},ok:false});
-              }
-              updateProgress(null);
-            }
-          }
-
-          var workers=[];
-          for(var w=0;w<Math.min(CONCURRENCY,tasks.length);w++)workers.push(worker());
-          await Promise.all(workers);
-
-          return {ok:batchOk,er:batchEr,bytes:batchBytes,results:results};
-        }
-
-        for(var ci=0;ci<buckets.length;ci++){
-          if(cancelled)return;
-          var bk=buckets[ci];
-          var fo=safe(bk.cn,50)+'_'+bk.cId.slice(-8);
-
-          // ZIP fallback: check if adding this customer would exceed limit
-          if(!useFS){
-            var estCustSize=bk.files.length*2*1024*1024;
-            if(zipBytes>0&&zipBytes+estCustSize>MAX_ZIP_BYTES)await flushZip();
-          }
-
-          // Build task list for this customer
-          var tasks=[];
-          for(var fi=0;fi<bk.files.length;fi++){
-            tasks.push({ff:bk.files[fi],fo:fo,bkCId:bk.cId,bkCn:bk.cn});
-          }
-
-          // Download all files for this customer in parallel
-          var batch=await downloadBatch(tasks);
-
-          // Record CSV rows (in order)
-          for(var ri=0;ri<batch.results.length;ri++){
-            masterCsv.push(batch.results[ri].row);
-            if(zipCsv)zipCsv.push(batch.results[ri].row);
-            masterRows.push(batch.results[ri].masterRow);
-          }
-
-          if(batch.er===0)markCompleted(bk.cId);
-          custResults.push({name:bk.cn,id:bk.cId,total:bk.files.length,ok:batch.ok,fail:batch.er,bytes:batch.bytes});
-        }
-
-        // Flush final ZIP if in fallback mode
-        if(!useFS&&zip){
-          var hasFiles=false;try{hasFiles=Object.keys(zip.files).length>0;}catch(e){}
-          if(hasFiles)await flushZip();
-        }
-
-        // ── Generate Excel + CSV ──
-        det.textContent='Generating Excel report...';
-
-        // Build Excel
-        try{
-          var wb=XLSX.utils.book_new();
-          var wsData=[['Customer ID','Customer Name','Attachment ID','File Name','Job ID','Estimate ID','Equipment ID','Attachable Type','File Path','Status']];
-          for(var ri=0;ri<masterRows.length;ri++){var mr=masterRows[ri];wsData.push([mr.customer_id,mr.customer_name,mr.attachment_id,mr.file_name,mr.job_id,mr.estimate_id,mr.equipment_id,mr.attachable_type,mr.file_path,mr.status]);}
-          var ws=XLSX.utils.aoa_to_sheet(wsData);
-          ws['!cols']=[{wch:28},{wch:25},{wch:28},{wch:35},{wch:14},{wch:14},{wch:14},{wch:14},{wch:60},{wch:15}];
-          XLSX.utils.book_append_sheet(wb,ws,'All Attachments');
-
-          var sumData=[['Customer ID','Customer Name','Total Files','Successful','Errors','Size','Status']];
-          for(var si=0;si<custResults.length;si++){var cr=custResults[si];sumData.push([cr.id,cr.name,cr.total,cr.ok,cr.fail,fmtBytes(cr.bytes),cr.fail===0?'Complete':'Partial']);}
-          var ws2=XLSX.utils.aoa_to_sheet(sumData);
-          ws2['!cols']=[{wch:28},{wch:25},{wch:12},{wch:12},{wch:10},{wch:14},{wch:15}];
-          XLSX.utils.book_append_sheet(wb,ws2,'Customer Summary');
-
-          if(er>0){
-            var errData=[['Customer ID','Customer Name','Attachment ID','File Name','Job ID','Estimate ID','Equipment ID','Error']];
-            for(var ei=0;ei<masterRows.length;ei++){if(masterRows[ei].status.indexOf('error')===0){var em=masterRows[ei];errData.push([em.customer_id,em.customer_name,em.attachment_id,em.file_name,em.job_id,em.estimate_id,em.equipment_id,em.status]);}}
-            var ws3=XLSX.utils.aoa_to_sheet(errData);
-            ws3['!cols']=[{wch:28},{wch:25},{wch:28},{wch:35},{wch:14},{wch:14},{wch:14},{wch:40}];
-            XLSX.utils.book_append_sheet(wb,ws3,'Errors');
-          }
-
-          var xlsOut=XLSX.write(wb,{bookType:'xlsx',type:'array'});
-          var xlsBlob=new Blob([xlsOut],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-          var csvBlob=new Blob([masterCsv.join('\n')],{type:'text/csv'});
-
-          if(useFS){
-            await writeTextToDir(dirHandle,'HCP_Export_Log_'+ds+'.csv',masterCsv.join('\n'));
-            await writeFileToDir(dirHandle,['HCP_Export_Log_'+ds+'.xlsx'],xlsBlob);
-            det.textContent='Excel and CSV saved to export folder.';
-          }else{
-            var csvLink=document.createElement('a');csvLink.href=URL.createObjectURL(csvBlob);csvLink.download='HCP_Attachments_FULL_LOG_'+ds+'.csv';csvLink.click();URL.revokeObjectURL(csvLink.href);
-            await sleep(500);
-            var xlsLink=document.createElement('a');xlsLink.href=URL.createObjectURL(xlsBlob);xlsLink.download='HCP_Attachments_FULL_LOG_'+ds+'.xlsx';xlsLink.click();URL.revokeObjectURL(xlsLink.href);
-          }
-        }catch(xlsErr){
-          det.textContent='Excel error (CSV still saved): '+xlsErr.message;
-          if(useFS){try{await writeTextToDir(dirHandle,'HCP_Export_Log_'+ds+'.csv',masterCsv.join('\n'));}catch(e){}}
-          else{var csvB=new Blob([masterCsv.join('\n')],{type:'text/csv'});var cl=document.createElement('a');cl.href=URL.createObjectURL(csvB);cl.download='HCP_Attachments_FULL_LOG_'+ds+'.csv';cl.click();}
-          await sleep(1500);
-        }
-
-        clearInterval(keepaliveTimer);
-
-        // ── Verification Summary ──
-        tF.style.width='100%';tF.style.background='linear-gradient(90deg,#059669,#10b981,#34d399)';
-        phase.textContent='EXPORT COMPLETE';phase.style.color='#34d399';title.textContent='All Done!';
-        sT.textContent='';
-
-        var totalElapsed=fmtTime(Math.round((Date.now()-dlStartTime)/1000));
-        var totalCustProcessed=custResults.length;
-        var totalCustClean=custResults.filter(function(c){return c.fail===0}).length;
-        var totalCustWithErrors=totalCustProcessed-totalCustClean;
-
-        summaryBox.style.display='block';
-        var sh='<div style="margin-bottom:12px;font-size:14px;font-weight:600;color:#e2e8f0">Verification Summary</div>';
-        sh+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">';
-        sh+='<div style="color:#9ca3af">Mode:</div><div style="color:#e2e8f0">'+(useFS?'Direct to folder':'ZIP downloads ('+zC+' files)')+'</div>';
-        sh+='<div style="color:#9ca3af">Customers processed:</div><div style="color:#e2e8f0">'+totalCustProcessed+(skippedCust?' (+'+skippedCust+' skipped)':'')+'</div>';
-        sh+='<div style="color:#9ca3af">Files downloaded:</div><div style="color:#e2e8f0">'+(dl-er)+' ('+fmtBytes(totalBytes)+')</div>';
-        sh+='<div style="color:#9ca3af">Errors:</div><div style="color:'+(er?'#f87171':'#34d399')+'">'+er+'</div>';
-        sh+='<div style="color:#9ca3af">Total time:</div><div style="color:#e2e8f0">'+totalElapsed+'</div>';
-        sh+='</div>';
-        if(totalCustWithErrors>0){
-          sh+='<div style="margin-top:8px;font-size:12px;font-weight:600;color:#f87171;margin-bottom:6px">Customers with errors (will retry on next run):</div>';
-          sh+='<div style="font-size:11px;color:#9ca3af;max-height:120px;overflow-y:auto">';
-          for(var ri=0;ri<custResults.length;ri++){if(custResults[ri].fail>0)sh+='<div style="margin-bottom:2px">'+custResults[ri].name+' \u2014 '+custResults[ri].fail+'/'+custResults[ri].total+' failed</div>';}
-          sh+='</div>';
-        }else{sh+='<div style="font-size:12px;color:#34d399">\u2713 All files downloaded successfully.</div>';}
-
-        // Next steps: how to zip and send
-        if(useFS){
-          var isMac=/Mac|iPhone|iPad/.test(navigator.userAgent);
-          var isWin=/Win/.test(navigator.userAgent);
-          sh+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06)">';
-          sh+='<div style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:8px">\ud83d\udce6 Next Step: Zip and Send</div>';
-          if(isMac){
-            sh+='<div style="font-size:12px;color:#9ca3af;line-height:1.6">';
-            sh+='1. Open <strong style="color:#cbd5e1">Finder</strong> and go to where you saved the export folder<br>';
-            sh+='2. <strong style="color:#cbd5e1">Right-click</strong> the <strong style="color:#a78bfa">HCP_Export</strong> folder<br>';
-            sh+='3. Click <strong style="color:#cbd5e1">"Compress"</strong><br>';
-            sh+='4. A .zip file will appear next to the folder \u2014 send that file to your migration contact</div>';
-          }else if(isWin){
-            sh+='<div style="font-size:12px;color:#9ca3af;line-height:1.6">';
-            sh+='1. Open <strong style="color:#cbd5e1">File Explorer</strong> and go to where you saved the export folder<br>';
-            sh+='2. <strong style="color:#cbd5e1">Right-click</strong> the <strong style="color:#a78bfa">HCP_Export</strong> folder<br>';
-            sh+='3. Click <strong style="color:#cbd5e1">"Compress to ZIP file"</strong><br>';
-            sh+='4. A .zip file will appear next to the folder \u2014 send that file to your migration contact</div>';
-          }else{
-            sh+='<div style="font-size:12px;color:#9ca3af;line-height:1.6">';
-            sh+='1. Find the <strong style="color:#a78bfa">HCP_Export</strong> folder where you saved it<br>';
-            sh+='2. <strong style="color:#cbd5e1">Right-click</strong> the folder and choose <strong style="color:#cbd5e1">"Compress"</strong> or <strong style="color:#cbd5e1">"Send to \u2192 Compressed folder"</strong><br>';
-            sh+='3. Send the resulting .zip file to your migration contact</div>';
-          }
-          sh+='<div style="font-size:11px;color:#4b5563;margin-top:8px">\ud83d\udca1 Tip: If the folder is very large, you can also share it via Google Drive or Dropbox instead of zipping.</div>';
-          sh+='</div>';
-        }
-
-        summaryBox.innerHTML=sh;
-
-        det.textContent=(dl-er)+' files ('+fmtBytes(totalBytes)+') in '+totalElapsed;
-        sF.textContent=(dl-er)+' files';
-        cb.textContent='Close';cb.style.background='rgba(16,185,129,0.15)';cb.style.color='#34d399';
-        window.__hcpExporterRunning=false;
-
-      }catch(e){
-        clearInterval(keepaliveTimer);
-        phase.textContent='ERROR';phase.style.color='#ef4444';
-        det.textContent=e.message;
-        tF.style.background='linear-gradient(90deg,#dc2626,#ef4444)';
-        cb.textContent='Close';window.__hcpExporterRunning=false;
-      }
-    }
-    run();
-  };
-  var raw='('+fn.toString()+')()';
-  raw=raw.replace(/\/\/[^\n]*/g,'');
-  raw=raw.replace(/\n\s*/g,' ');
-  raw=raw.replace(/\s{2,}/g,' ');
-  return 'javascript:void('+encodeURIComponent(raw)+')';
-})();
-
+var VALID=["TestExport311","HCP-EX-7f3a9b2c","HCP-EX-4e8d1f6a","HCP-EX-9c2b5e8d","HCP-EX-1a7f3c9e","HCP-EX-6d4b8a2f","HCP-EX-3e9c1d7b","HCP-EX-8b5a2f4e","HCP-EX-2c7d9a1f","HCP-EX-5f3b8c6d","HCP-EX-0a4e7d9c"];
+var BOOKMARKLET="javascript:void((function()%7B%20if(!window.location.hostname.includes('housecallpro.com'))%7Balert('Please%20run%20this%20from%20your%20HouseCallPro%20account!%5CnGo%20to%20pro.housecallpro.com%20first.')%3Breturn%3B%7D%20if(window.__hcpExporterRunning)%7Balert('Export%20is%20already%20running!')%3Breturn%3B%7D%20window.__hcpExporterRunning%3Dtrue%3B%20var%20PAGE_SIZE%3D100%2CATT_PAGE_SIZE%3D100%2CRETRY_MAX%3D2%2CRETRY_DELAY%3D2000%2CKEEPALIVE_MS%3D120000%2CMAX_ZIP_BYTES%3D800*1024*1024%2CCONCURRENCY%3D6%3B%20var%20keepaliveTimer%3DsetInterval(function()%7Bfetch('%2Fapi%2Fv2%2Forganization'%2C%7Bcredentials%3A'include'%2Cheaders%3A%7Baccept%3A'application%2Fjson'%7D%7D).catch(function()%7B%7D)%3B%7D%2CKEEPALIVE_MS)%3B%20var%20DEDUP_KEY%3D'__hcp_export_done'%3B%20function%20getCompleted()%7Btry%7Breturn%20JSON.parse(sessionStorage.getItem(DEDUP_KEY)%7C%7C'%7B%7D')%3B%7Dcatch(e)%7Breturn%20%7B%7D%3B%7D%7D%20function%20markCompleted(cid)%7Bvar%20d%3DgetCompleted()%3Bd%5Bcid%5D%3DDate.now()%3BsessionStorage.setItem(DEDUP_KEY%2CJSON.stringify(d))%3B%7D%20function%20isCompleted(cid)%7Breturn%20!!getCompleted()%5Bcid%5D%3B%7D%20var%20overlay%3Ddocument.createElement('div')%3B%20overlay.style.cssText%3D'position%3Afixed%3Btop%3A0%3Bleft%3A0%3Bright%3A0%3Bbottom%3A0%3Bbackground%3Argba(8%2C8%2C18%2C0.92)%3Bz-index%3A999999%3Bdisplay%3Aflex%3Balign-items%3Acenter%3Bjustify-content%3Acenter%3Bfont-family%3A-apple-system%2CBlinkMacSystemFont%2Csans-serif%3Bbackdrop-filter%3Ablur(4px)'%3B%20var%20box%3Ddocument.createElement('div')%3B%20box.style.cssText%3D'background%3Alinear-gradient(145deg%2C%23111827%2C%230f172a)%3Bborder%3A1px%20solid%20rgba(255%2C255%2C255%2C0.06)%3Bborder-radius%3A20px%3Bpadding%3A44px%3Bmax-width%3A560px%3Bwidth%3A92%25%3Bcolor%3A%23d1d5db%3Bbox-shadow%3A0%2030px%2080px%20rgba(0%2C0%2C0%2C0.6)'%3B%20function%20el(t%2Cs%2Cx)%7Bvar%20e%3Ddocument.createElement(t)%3Bif(s)e.style.cssText%3Ds%3Bif(x)e.textContent%3Dx%3Breturn%20e%3B%7D%20var%20title%3Del('h2'%2C'margin%3A0%200%206px%200%3Bcolor%3A%23f9fafb%3Bfont-size%3A18px%3Bfont-weight%3A700'%2C'HouseCallPro%20Attachment%20Export')%3B%20var%20phase%3Del('p'%2C'margin%3A0%200%2020px%200%3Bcolor%3A%236b7280%3Bfont-size%3A12px%3Bfont-weight%3A500%3Bletter-spacing%3A0.3px%3Btext-transform%3Auppercase'%2C'Initializing...')%3B%20var%20tO%3Del('div'%2C'background%3A%231f2937%3Bborder-radius%3A10px%3Bheight%3A20px%3Boverflow%3Ahidden%3Bmargin-bottom%3A10px')%3B%20var%20tF%3Del('div'%2C'background%3Alinear-gradient(90deg%2C%236366f1%2C%238b5cf6%2C%23a78bfa)%3Bheight%3A100%25%3Bwidth%3A0%25%3Btransition%3Awidth%200.4s%20ease%3Bborder-radius%3A10px')%3B%20tO.appendChild(tF)%3B%20var%20sts%3Del('div'%2C'display%3Aflex%3Bgap%3A16px%3Bmargin-bottom%3A4px%3Bflex-wrap%3Awrap')%3B%20var%20sF%3Del('span'%2C'font-size%3A13px%3Bcolor%3A%239ca3af'%2C'0%20files')%3B%20var%20sE%3Del('span'%2C'font-size%3A13px%3Bcolor%3A%239ca3af'%2C'0%20errors')%3B%20var%20sZ%3Del('span'%2C'font-size%3A13px%3Bcolor%3A%239ca3af'%2C'')%3B%20var%20sT%3Del('span'%2C'font-size%3A13px%3Bcolor%3A%239ca3af'%2C'')%3B%20sts.appendChild(sF)%3Bsts.appendChild(sE)%3Bsts.appendChild(sZ)%3Bsts.appendChild(sT)%3B%20var%20det%3Del('p'%2C'margin%3A0%200%2020px%200%3Bfont-size%3A12px%3Bcolor%3A%234b5563%3Bmin-height%3A18px'%2C'')%3B%20var%20summaryBox%3Del('div'%2C'display%3Anone%3Bbackground%3Argba(255%2C255%2C255%2C0.03)%3Bborder%3A1px%20solid%20rgba(255%2C255%2C255%2C0.06)%3Bborder-radius%3A12px%3Bpadding%3A16px%3Bmargin-bottom%3A20px%3Bfont-size%3A13px'%2C'')%3B%20var%20br%3Del('div'%2C'display%3Aflex%3Bgap%3A10px')%3B%20var%20cb%3Del('button'%2C'background%3Argba(255%2C255%2C255%2C0.05)%3Bcolor%3A%239ca3af%3Bborder%3A1px%20solid%20rgba(255%2C255%2C255%2C0.08)%3Bpadding%3A9px%2022px%3Bborder-radius%3A8px%3Bcursor%3Apointer%3Bfont-size%3A13px%3Bfont-weight%3A500'%2C'Cancel')%3B%20br.appendChild(cb)%3B%20box.appendChild(title)%3Bbox.appendChild(phase)%3Bbox.appendChild(tO)%3Bbox.appendChild(sts)%3Bbox.appendChild(det)%3Bbox.appendChild(summaryBox)%3Bbox.appendChild(br)%3B%20overlay.appendChild(box)%3Bdocument.body.appendChild(overlay)%3B%20var%20cancelled%3Dfalse%3B%20function%20cleanup()%7Bcancelled%3Dtrue%3BclearInterval(keepaliveTimer)%3Bwindow.__hcpExporterRunning%3Dfalse%3Boverlay.remove()%3B%7D%20cb.onclick%3Dcleanup%3B%20function%20sleep(ms)%7Breturn%20new%20Promise(function(r)%7BsetTimeout(r%2Cms)%7D)%3B%7D%20function%20pct(n%2Ct)%7Breturn%20Math.round(n%2FMath.max(t%2C1)*100)%3B%7D%20function%20fmtTime(s)%7Bif(s%3C60)return%20s%2B's'%3Breturn%20Math.floor(s%2F60)%2B'm%20'%2B(s%2560)%2B's'%3B%7D%20function%20fmtBytes(b)%7Bif(b%3C1024)return%20b%2B'%20B'%3Bif(b%3C1048576)return(b%2F1024).toFixed(1)%2B'%20KB'%3Bif(b%3C1073741824)return(b%2F1048576).toFixed(1)%2B'%20MB'%3Breturn(b%2F1073741824).toFixed(2)%2B'%20GB'%3B%7D%20function%20getCSRF()%7Bvar%20m%3Ddocument.querySelector('meta%5Bname%3D%22csrf-token%22%5D')%3Bif(m)return%20m.getAttribute('content')%3Bvar%20ck%3Ddocument.cookie.split('%3B')%3Bfor(var%20i%3D0%3Bi%3Cck.length%3Bi%2B%2B)%7Bvar%20c%3Dck%5Bi%5D.trim()%3Bif(c.toLowerCase().indexOf('csrf')%3D%3D%3D0)return%20c.split('%3D')%5B1%5D%3B%7Dreturn%20''%3B%7D%20async%20function%20api(url)%7Bvar%20h%3D%7Baccept%3A'application%2Fjson'%7D%3Bvar%20csrf%3DgetCSRF()%3Bif(csrf)h%5B'x-csrf-token'%5D%3Dcsrf%3Bvar%20r%3Dawait%20fetch(url%2C%7Bcredentials%3A'include'%2Cheaders%3Ah%7D)%3Bif(!r.ok)throw%20new%20Error('HTTP%20'%2Br.status)%3Breturn%20r.json()%3B%7D%20async%20function%20dlB(url%2Cretries)%7Bretries%3Dretries%7C%7C0%3Btry%7Bvar%20r%3Dawait%20fetch(url)%3Bif(!r.ok)throw%20new%20Error('HTTP%20'%2Br.status)%3Breturn%20r.blob()%3B%7Dcatch(e)%7Bif(retries%3CRETRY_MAX)%7Bawait%20sleep(RETRY_DELAY)%3Breturn%20dlB(url%2Cretries%2B1)%3B%7Dthrow%20e%3B%7D%7D%20function%20safe(s%2Cm)%7Breturn(s%7C%7C'unnamed').replace(%2F%5B%5Ea-zA-Z0-9%20._-%5D%2Fg%2C'_').substring(0%2Cm%7C%7C60)%3B%7D%20var%20useFS%3D!!window.showDirectoryPicker%3B%20async%20function%20getDir()%7Btry%7Bvar%20dh%3Dawait%20window.showDirectoryPicker(%7Bmode%3A'readwrite'%2CstartIn%3A'desktop'%7D)%3Breturn%20await%20dh.getDirectoryHandle('HCP_Export_'%2B(new%20Date().toISOString().slice(0%2C10))%2C%7Bcreate%3Atrue%7D)%3B%7Dcatch(e)%7Breturn%20null%3B%7D%7D%20async%20function%20writeFileToDir(dh%2Cpp%2Cblob)%7Bvar%20c%3Ddh%3Bfor(var%20i%3D0%3Bi%3Cpp.length-1%3Bi%2B%2B)%7Bc%3Dawait%20c.getDirectoryHandle(pp%5Bi%5D%2C%7Bcreate%3Atrue%7D)%3B%7Dvar%20fh%3Dawait%20c.getFileHandle(pp%5Bpp.length-1%5D%2C%7Bcreate%3Atrue%7D)%3Bvar%20w%3Dawait%20fh.createWritable()%3Bawait%20w.write(blob)%3Bawait%20w.close()%3B%7D%20async%20function%20writeTextToDir(dh%2Cfn%2Ctxt)%7Bvar%20fh%3Dawait%20dh.getFileHandle(fn%2C%7Bcreate%3Atrue%7D)%3Bvar%20w%3Dawait%20fh.createWritable()%3Bawait%20w.write(txt)%3Bawait%20w.close()%3B%7D%20async%20function%20run()%7B%20try%7B%20phase.textContent%3D'PHASE%201%20OF%203%20%5Cu2014%20SCANNING%20CUSTOMERS'%3B%20var%20f1%3Dawait%20api('%2Falpha%2Fcustomers%3Fpage%3D1%26page_size%3D1%26contractor%3Dfalse')%3B%20var%20tC%3Df1.total_count%7C%7C0%3B%20det.textContent%3D'Found%20'%2BtC%2B'%20customers'%3B%20await%20sleep(400)%3B%20var%20buckets%3D%5B%5D%2CtotF%3D0%2CskippedCust%3D0%2Cpg%3D1%2CcD%3D0%3B%20while(!cancelled)%7B%20var%20cd%3Dawait%20api('%2Falpha%2Fcustomers%3Fpage%3D'%2Bpg%2B'%26page_size%3D'%2BPAGE_SIZE%2B'%26contractor%3Dfalse')%3B%20var%20cs%3Dcd.data%7C%7C%5B%5D%3Bif(!cs.length)break%3B%20var%20tP%3Dcd.total_pages_count%7C%7C1%3B%20for(var%20i%3D0%3Bi%3Ccs.length%3Bi%2B%2B)%7B%20if(cancelled)return%3BcD%2B%2B%3B%20var%20c%3Dcs%5Bi%5D%3B%20var%20cn%3D((c.first_name%7C%7C'')%2B'%20'%2B(c.last_name%7C%7C'')).trim()%7C%7Cc.display_name%7C%7C'Unknown'%3B%20tF.style.width%3Dpct(cD%2CtC)*0.4%2B'%25'%3B%20det.textContent%3D'Scanning%3A%20'%2Bcn%2B'%20('%2BcD%2B'%2F'%2BtC%2B')'%3B%20if(isCompleted(c.id))%7BskippedCust%2B%2B%3BsF.textContent%3DtotF%2B'%20files%20found%20('%2BskippedCust%2B'%20skipped)'%3Bawait%20sleep(50)%3Bcontinue%3B%7D%20var%20cf%3D%5B%5D%2Cap%3D1%3B%20while(true)%7Btry%7B%20var%20ad%3Dawait%20api('%2Fapi%2Fcustomers%2F'%2Bc.id%2B'%2Fattachments%3Fpage%3D'%2Bap%2B'%26page_size%3D'%2BATT_PAGE_SIZE%2B'%26sort_by%3Dcreated_at%26sort_direction%3Ddesc%26attachable_type%3D')%3B%20var%20at%3Dad.data%7C%7C%5B%5D%3B%20for(var%20j%3D0%3Bj%3Cat.length%3Bj%2B%2B)%7Bvar%20a%3Dat%5Bj%5D%3Bvar%20du%3Da.download_url%7C%7Ca.attachment_file_url%3Bif(!du)continue%3B%20cf.push(%7BaId%3Aa.id%7C%7C''%2CfN%3Aa.file_name%7C%7Ca.file_file_name%7C%7C'file'%2CaT%3Aa.attachable_type%7C%7C'Unknown'%2CaTypeId%3Aa.attachable_id%7C%7C''%2CaUuid%3Aa.attachable_uuid%7C%7C''%2Cdu%3Adu%2CfSize%3Aa.file_file_size%7C%7C0%7D)%3B%7D%20if(ap%3E%3D(ad.total_pages_count%7C%7C1))break%3Bap%2B%2B%3B%20%7Dcatch(e)%7Bbreak%3B%7D%7D%20if(cf.length%3E0)%7Bbuckets.push(%7Bcn%3Acn%2CcId%3Ac.id%2Cfiles%3Acf%7D)%3BtotF%2B%3Dcf.length%3B%7D%20sF.textContent%3DtotF%2B'%20files%20found'%2B(skippedCust%3F'%20('%2BskippedCust%2B'%20skipped)'%3A'')%3B%20await%20sleep(50)%3B%20%7D%20if(pg%3E%3DtP)break%3Bpg%2B%2B%3B%20%7D%20if(cancelled)return%3B%20if(!totF)%7B%20phase.textContent%3D'COMPLETE%20%5Cu2014%20NO%20NEW%20ATTACHMENTS'%3B%20det.textContent%3DskippedCust%3FskippedCust%2B'%20customers%20already%20downloaded.'%3A'No%20attachments%20found.'%3B%20tF.style.width%3D'100%25'%3BtF.style.background%3D'linear-gradient(90deg%2C%23f59e0b%2C%23eab308)'%3B%20cb.textContent%3D'Close'%3Bwindow.__hcpExporterRunning%3Dfalse%3BclearInterval(keepaliveTimer)%3Breturn%3B%20%7D%20phase.textContent%3D'SCAN%20COMPLETE'%3B%20tF.style.width%3D'40%25'%3B%20var%20estTotalBytes%3D0%2CfilesWithSize%3D0%3B%20for(var%20bi%3D0%3Bbi%3Cbuckets.length%3Bbi%2B%2B)%7Bfor(var%20bfi%3D0%3Bbfi%3Cbuckets%5Bbi%5D.files.length%3Bbfi%2B%2B)%7Bif(buckets%5Bbi%5D.files%5Bbfi%5D.fSize%3E0)%7BestTotalBytes%2B%3Dbuckets%5Bbi%5D.files%5Bbfi%5D.fSize%3BfilesWithSize%2B%2B%3B%7D%7D%7D%20if(filesWithSize%3E0%26%26filesWithSize%3CtotF)%7BestTotalBytes%3DMath.round((estTotalBytes%2FfilesWithSize)*totF)%3B%7Delse%20if(filesWithSize%3D%3D%3D0)%7BestTotalBytes%3DtotF*2*1024*1024%3B%7D%20var%20estTimeSec%3DMath.round(estTotalBytes%2F(5*1024*1024))%3B%20var%20ch%3D'%3Cdiv%20style%3D%22margin-bottom%3A14px%3Bfont-size%3A15px%3Bfont-weight%3A600%3Bcolor%3A%23e2e8f0%22%3EReady%20to%20Download%3C%2Fdiv%3E'%3B%20ch%2B%3D'%3Cdiv%20style%3D%22display%3Agrid%3Bgrid-template-columns%3A1fr%201fr%3Bgap%3A10px%3Bmargin-bottom%3A16px%22%3E'%3B%20ch%2B%3D'%3Cdiv%20style%3D%22background%3Argba(255%2C255%2C255%2C0.03)%3Bborder%3A1px%20solid%20rgba(255%2C255%2C255%2C0.06)%3Bborder-radius%3A10px%3Bpadding%3A12px%22%3E%3Cdiv%20style%3D%22font-size%3A11px%3Bcolor%3A%236b7280%3Bmargin-bottom%3A2px%22%3ECustomers%3C%2Fdiv%3E%3Cdiv%20style%3D%22font-size%3A18px%3Bfont-weight%3A700%3Bcolor%3A%23e2e8f0%22%3E'%2Bbuckets.length%2B'%3C%2Fdiv%3E%3C%2Fdiv%3E'%3B%20ch%2B%3D'%3Cdiv%20style%3D%22background%3Argba(255%2C255%2C255%2C0.03)%3Bborder%3A1px%20solid%20rgba(255%2C255%2C255%2C0.06)%3Bborder-radius%3A10px%3Bpadding%3A12px%22%3E%3Cdiv%20style%3D%22font-size%3A11px%3Bcolor%3A%236b7280%3Bmargin-bottom%3A2px%22%3ETotal%20Files%3C%2Fdiv%3E%3Cdiv%20style%3D%22font-size%3A18px%3Bfont-weight%3A700%3Bcolor%3A%23e2e8f0%22%3E'%2BtotF.toLocaleString()%2B'%3C%2Fdiv%3E%3C%2Fdiv%3E'%3B%20ch%2B%3D'%3Cdiv%20style%3D%22background%3Argba(255%2C255%2C255%2C0.03)%3Bborder%3A1px%20solid%20rgba(255%2C255%2C255%2C0.06)%3Bborder-radius%3A10px%3Bpadding%3A12px%22%3E%3Cdiv%20style%3D%22font-size%3A11px%3Bcolor%3A%236b7280%3Bmargin-bottom%3A2px%22%3EEstimated%20Size%3C%2Fdiv%3E%3Cdiv%20style%3D%22font-size%3A18px%3Bfont-weight%3A700%3Bcolor%3A%23e2e8f0%22%3E'%2BfmtBytes(estTotalBytes)%2B'%3C%2Fdiv%3E%3C%2Fdiv%3E'%3B%20ch%2B%3D'%3Cdiv%20style%3D%22background%3Argba(255%2C255%2C255%2C0.03)%3Bborder%3A1px%20solid%20rgba(255%2C255%2C255%2C0.06)%3Bborder-radius%3A10px%3Bpadding%3A12px%22%3E%3Cdiv%20style%3D%22font-size%3A11px%3Bcolor%3A%236b7280%3Bmargin-bottom%3A2px%22%3EEstimated%20Time%3C%2Fdiv%3E%3Cdiv%20style%3D%22font-size%3A18px%3Bfont-weight%3A700%3Bcolor%3A%23e2e8f0%22%3E~'%2BfmtTime(estTimeSec)%2B'%3C%2Fdiv%3E%3C%2Fdiv%3E'%3B%20ch%2B%3D'%3C%2Fdiv%3E'%3B%20if(skippedCust%3E0)ch%2B%3D'%3Cdiv%20style%3D%22font-size%3A12px%3Bcolor%3A%236b7280%3Bmargin-bottom%3A12px%22%3E'%2BskippedCust%2B'%20customers%20skipped%20(already%20downloaded)%3C%2Fdiv%3E'%3B%20ch%2B%3D'%3Cdiv%20style%3D%22font-size%3A12px%3Bcolor%3A%23f59e0b%3Bline-height%3A1.5%3Bmargin-bottom%3A16px%22%3EMake%20sure%20you%20have%20at%20least%20%3Cstrong%20style%3D%22color%3A%23fbbf24%22%3E'%2BfmtBytes(Math.round(estTotalBytes*1.1))%2B'%3C%2Fstrong%3E%20of%20free%20disk%20space.%3C%2Fdiv%3E'%3B%20ch%2B%3D'%3Cdiv%20style%3D%22display%3Aflex%3Bgap%3A10px%22%3E'%3B%20ch%2B%3D'%3Cbutton%20id%3D%22__hcp_start_dl%22%20style%3D%22flex%3A1%3Bpadding%3A12px%3Bborder-radius%3A10px%3Bborder%3Anone%3Bbackground%3Alinear-gradient(135deg%2C%234f46e5%2C%236366f1)%3Bcolor%3A%23fff%3Bfont-size%3A14px%3Bfont-weight%3A600%3Bcursor%3Apointer%22%3EStart%20Download%3C%2Fbutton%3E'%3B%20ch%2B%3D'%3Cbutton%20id%3D%22__hcp_cancel_dl%22%20style%3D%22padding%3A12px%2020px%3Bborder-radius%3A10px%3Bborder%3A1px%20solid%20rgba(255%2C255%2C255%2C0.08)%3Bbackground%3Argba(255%2C255%2C255%2C0.05)%3Bcolor%3A%239ca3af%3Bfont-size%3A14px%3Bcursor%3Apointer%22%3ECancel%3C%2Fbutton%3E'%3B%20ch%2B%3D'%3C%2Fdiv%3E'%3B%20det.textContent%3D''%3BsummaryBox.style.display%3D'block'%3BsummaryBox.innerHTML%3Dch%3B%20var%20uc%3Dawait%20new%20Promise(function(res)%7Bdocument.getElementById('__hcp_start_dl').onclick%3Dfunction()%7Bres('go')%7D%3Bdocument.getElementById('__hcp_cancel_dl').onclick%3Dfunction()%7Bres('no')%7D%3B%7D)%3B%20if(uc%3D%3D%3D'no')%7Bcleanup()%3Breturn%3B%7D%20summaryBox.style.display%3D'none'%3BsummaryBox.innerHTML%3D''%3B%20phase.textContent%3D'PHASE%202%20OF%203%20%5Cu2014%20PREPARING%20DOWNLOAD'%3B%20det.textContent%3DtotF%2B'%20attachments%20across%20'%2Bbuckets.length%2B'%20customers.'%3B%20var%20dirHandle%3Dnull%3B%20if(useFS)%7Bdet.textContent%3D'Choose%20a%20folder%20to%20save%20your%20export%20into...'%3BdirHandle%3Dawait%20getDir()%3Bif(!dirHandle)%7BuseFS%3Dfalse%3Bdet.textContent%3D'Folder%20cancelled.%20Falling%20back%20to%20ZIP...'%3Bawait%20sleep(1000)%3B%7Delse%7BsZ.textContent%3D'%5Cud83d%5Cudcc2%20Saving%20to%20folder'%3Bdet.textContent%3D'Folder%20selected.%20Loading%20libraries...'%3B%7D%7D%20if(!useFS)%7BsZ.textContent%3D'ZIP%20mode'%3Bdet.textContent%3D'Loading%20ZIP%20library...'%3B%7D%20var%20sc%3Ddocument.createElement('script')%3Bsc.src%3D'https%3A%2F%2Fcdnjs.cloudflare.com%2Fajax%2Flibs%2Fjszip%2F3.10.1%2Fjszip.min.js'%3Bdocument.head.appendChild(sc)%3B%20await%20new%20Promise(function(ok%2Cfl)%7Bsc.onload%3Dok%3Bsc.onerror%3Dfunction()%7Bfl(new%20Error('JSZip%20failed'))%7D%3B%7D)%3B%20var%20sc2%3Ddocument.createElement('script')%3Bsc2.src%3D'https%3A%2F%2Fcdnjs.cloudflare.com%2Fajax%2Flibs%2Fxlsx%2F0.18.5%2Fxlsx.full.min.js'%3Bdocument.head.appendChild(sc2)%3B%20await%20new%20Promise(function(ok%2Cfl)%7Bsc2.onload%3Dok%3Bsc2.onerror%3Dfunction()%7Bfl(new%20Error('SheetJS%20failed'))%7D%3B%7D)%3B%20await%20sleep(300)%3B%20phase.textContent%3D'PHASE%203%20OF%203%20%5Cu2014%20DOWNLOADING'%3B%20var%20dl%3D0%2Cer%3D0%2CtotalBytes%3D0%2CdlStartTime%3DDate.now()%2Cds%3Dnew%20Date().toISOString().slice(0%2C10)%3B%20var%20csvH%3D'customer_id%2Ccustomer_name%2Cattachment_id%2Cfile_name%2Cjob_id%2Cestimate_id%2Cequipment_id%2Cattachable_type%2Cfile_path%2Cstatus'%3B%20var%20masterCsv%3D%5BcsvH%5D%2CmasterRows%3D%5B%5D%2CcustResults%3D%5B%5D%3B%20var%20zip%3Dnull%2CzC%3D0%2CzipBytes%3D0%2CzipCsv%3Dnull%3B%20if(!useFS)%7Bzip%3Dnew%20JSZip()%3BzipCsv%3D%5BcsvH%5D%3B%7D%20async%20function%20flushZip()%7Bif(!zip)return%3BzC%2B%2B%3Bvar%20zN%3D'HCP_Attachments_part'%2BzC%2B'_'%2Bds%2B'.zip'%3Bzip.file('_log_part'%2BzC%2B'.csv'%2CzipCsv.join('%5Cn'))%3Bdet.textContent%3D'Compressing%20ZIP%20'%2BzC%2B'...'%3Bvar%20ct%3Dawait%20zip.generateAsync(%7Btype%3A'blob'%2Ccompression%3A'DEFLATE'%2CcompressionOptions%3A%7Blevel%3A3%7D%7D)%3Bvar%20a%3Ddocument.createElement('a')%3Ba.href%3DURL.createObjectURL(ct)%3Ba.download%3DzN%3Ba.click()%3BURL.revokeObjectURL(a.href)%3Bawait%20sleep(800)%3Bzip%3Dnew%20JSZip()%3BzipBytes%3D0%3BzipCsv%3D%5BcsvH%5D%3B%7D%20function%20updProg(cf)%7Bvar%20el2%3D(Date.now()-dlStartTime)%2F1000%3Bvar%20dn%3Ddl-er%3Bvar%20rt%3Ddn%2FMath.max(el2%2C1)%3Bvar%20rm%3DMath.round((totF-dl)%2FMath.max(rt%2C0.1))%3BsT.textContent%3D'%5Cu23f1%20'%2BfmtTime(rm)%2B'%20left'%3BtF.style.width%3D(40%2Bpct(dl%2CtotF)*0.55)%2B'%25'%3Bif(cf)det.textContent%3Dcf%2B'%20('%2Bdl%2B'%2F'%2BtotF%2B')'%3BsF.textContent%3Ddn%2B'%20downloaded%20('%2BfmtBytes(totalBytes)%2B')'%3BsE.textContent%3Der%3E0%3Fer%2B'%20errors'%3A''%3B%7D%20async%20function%20dlBatch(tasks)%7Bvar%20results%3D%5B%5D%2Cidx%3D0%2CbOk%3D0%2CbEr%3D0%2CbBy%3D0%3B%20async%20function%20wk()%7Bwhile(idx%3Ctasks.length)%7Bif(cancelled)return%3Bvar%20ti%3Didx%2B%2B%3Bif(ti%3E%3Dtasks.length)return%3Bvar%20t%3Dtasks%5Bti%5D%3Bvar%20ff%3Dt.ff%2Cfo%3Dt.fo%2CcId%3Dt.cId%2CcNm%3Dt.cNm%3B%20var%20sf%3Dff.aT%2B'_'%2B(ff.aUuid%3Fff.aUuid.slice(-8)%3A(ff.aTypeId%3FString(ff.aTypeId).slice(-8)%3A''))%3B%20var%20fn2%3D(ff.aId%3Fff.aId.slice(-8)%2B'_'%3A'')%2Bsafe(ff.fN%2C80)%3B%20var%20pp%3D%5Bfo%2Csf%2Cfn2%5D%2Cfp%3Dpp.join('%2F')%3B%20var%20jId%3Dff.aT%3D%3D%3D'Job'%3FString(ff.aTypeId)%3A''%2CeId%3Dff.aT%3D%3D%3D'Estimate'%3FString(ff.aTypeId)%3A''%2CqId%3Dff.aT%3D%3D%3D'Equipment'%3FString(ff.aTypeId)%3A''%3B%20dl%2B%2B%3BupdProg(cNm%2B'%20%5Cu2014%20'%2Bff.fN)%3B%20try%7Bvar%20bl%3Dawait%20dlB(ff.du)%3Bvar%20bS%3Dbl.size%7C%7C0%3BtotalBytes%2B%3DbS%3BbBy%2B%3DbS%3B%20if(useFS)%7Bawait%20writeFileToDir(dirHandle%2Cpp%2Cbl)%3B%7Delse%7Bzip.file(fp%2Cbl)%3BzipBytes%2B%3DbS%3B%7D%20bOk%2B%2B%3Bvar%20row%3D'%22'%2BcId%2B'%22%2C%22'%2BcNm%2B'%22%2C%22'%2Bff.aId%2B'%22%2C%22'%2Bff.fN%2B'%22%2C%22'%2BjId%2B'%22%2C%22'%2BeId%2B'%22%2C%22'%2BqId%2B'%22%2C%22'%2Bff.aT%2B'%22%2C%22'%2Bfp%2B'%22%2C%22success%22'%3B%20results.push(%7Brow%3Arow%2Cmr%3A%7Bcustomer_id%3AcId%2Ccustomer_name%3AcNm%2Cattachment_id%3Aff.aId%2Cfile_name%3Aff.fN%2Cjob_id%3AjId%2Cestimate_id%3AeId%2Cequipment_id%3AqId%2Cattachable_type%3Aff.aT%2Cfile_path%3Afp%2Cstatus%3A'success'%7D%2Cok%3Atrue%7D)%3B%20%7Dcatch(e)%7Ber%2B%2B%3Bdl--%3BbEr%2B%2B%3Bvar%20row%3D'%22'%2BcId%2B'%22%2C%22'%2BcNm%2B'%22%2C%22'%2Bff.aId%2B'%22%2C%22'%2Bff.fN%2B'%22%2C%22'%2BjId%2B'%22%2C%22'%2BeId%2B'%22%2C%22'%2BqId%2B'%22%2C%22'%2Bff.aT%2B'%22%2C%22'%2Bfp%2B'%22%2C%22error%3A'%2Be.message.substring(0%2C40)%2B'%22'%3B%20results.push(%7Brow%3Arow%2Cmr%3A%7Bcustomer_id%3AcId%2Ccustomer_name%3AcNm%2Cattachment_id%3Aff.aId%2Cfile_name%3Aff.fN%2Cjob_id%3AjId%2Cestimate_id%3AeId%2Cequipment_id%3AqId%2Cattachable_type%3Aff.aT%2Cfile_path%3Afp%2Cstatus%3A'error%3A%20'%2Be.message.substring(0%2C40)%7D%2Cok%3Afalse%7D)%3B%7D%20updProg(null)%3B%7D%7D%20var%20wks%3D%5B%5D%3Bfor(var%20w%3D0%3Bw%3CMath.min(CONCURRENCY%2Ctasks.length)%3Bw%2B%2B)wks.push(wk())%3Bawait%20Promise.all(wks)%3B%20return%7Bok%3AbOk%2Cer%3AbEr%2Cbytes%3AbBy%2Cresults%3Aresults%7D%3B%7D%20for(var%20ci%3D0%3Bci%3Cbuckets.length%3Bci%2B%2B)%7B%20if(cancelled)return%3Bvar%20bk%3Dbuckets%5Bci%5D%3Bvar%20fo%3Dsafe(bk.cn%2C50)%2B'_'%2Bbk.cId.slice(-8)%3B%20if(!useFS)%7Bvar%20ecs%3Dbk.files.length*2*1024*1024%3Bif(zipBytes%3E0%26%26zipBytes%2Becs%3EMAX_ZIP_BYTES)await%20flushZip()%3B%7D%20var%20tasks%3D%5B%5D%3Bfor(var%20fi%3D0%3Bfi%3Cbk.files.length%3Bfi%2B%2B)%7Btasks.push(%7Bff%3Abk.files%5Bfi%5D%2Cfo%3Afo%2CcId%3Abk.cId%2CcNm%3Abk.cn%7D)%3B%7D%20var%20batch%3Dawait%20dlBatch(tasks)%3B%20for(var%20ri%3D0%3Bri%3Cbatch.results.length%3Bri%2B%2B)%7BmasterCsv.push(batch.results%5Bri%5D.row)%3Bif(zipCsv)zipCsv.push(batch.results%5Bri%5D.row)%3BmasterRows.push(batch.results%5Bri%5D.mr)%3B%7D%20if(batch.er%3D%3D%3D0)markCompleted(bk.cId)%3B%20custResults.push(%7Bname%3Abk.cn%2Cid%3Abk.cId%2Ctotal%3Abk.files.length%2Cok%3Abatch.ok%2Cfail%3Abatch.er%2Cbytes%3Abatch.bytes%7D)%3B%20%7D%20if(!useFS%26%26zip)%7Bvar%20hf%3Dfalse%3Btry%7Bhf%3DObject.keys(zip.files).length%3E0%3B%7Dcatch(e)%7B%7Dif(hf)await%20flushZip()%3B%7D%20det.textContent%3D'Generating%20Excel%20report...'%3B%20try%7B%20var%20wb%3DXLSX.utils.book_new()%3B%20var%20wd%3D%5B%5B'Customer%20ID'%2C'Customer%20Name'%2C'Attachment%20ID'%2C'File%20Name'%2C'Job%20ID'%2C'Estimate%20ID'%2C'Equipment%20ID'%2C'Type'%2C'File%20Path'%2C'Status'%5D%5D%3B%20for(var%20ri%3D0%3Bri%3CmasterRows.length%3Bri%2B%2B)%7Bvar%20m%3DmasterRows%5Bri%5D%3Bwd.push(%5Bm.customer_id%2Cm.customer_name%2Cm.attachment_id%2Cm.file_name%2Cm.job_id%2Cm.estimate_id%2Cm.equipment_id%2Cm.attachable_type%2Cm.file_path%2Cm.status%5D)%3B%7D%20var%20ws%3DXLSX.utils.aoa_to_sheet(wd)%3Bws%5B'!cols'%5D%3D%5B%7Bwch%3A28%7D%2C%7Bwch%3A25%7D%2C%7Bwch%3A28%7D%2C%7Bwch%3A35%7D%2C%7Bwch%3A14%7D%2C%7Bwch%3A14%7D%2C%7Bwch%3A14%7D%2C%7Bwch%3A14%7D%2C%7Bwch%3A60%7D%2C%7Bwch%3A15%7D%5D%3B%20XLSX.utils.book_append_sheet(wb%2Cws%2C'All%20Attachments')%3B%20var%20sd%3D%5B%5B'Customer%20ID'%2C'Customer%20Name'%2C'Total'%2C'OK'%2C'Errors'%2C'Size'%2C'Status'%5D%5D%3B%20for(var%20si%3D0%3Bsi%3CcustResults.length%3Bsi%2B%2B)%7Bvar%20cr%3DcustResults%5Bsi%5D%3Bsd.push(%5Bcr.id%2Ccr.name%2Ccr.total%2Ccr.ok%2Ccr.fail%2CfmtBytes(cr.bytes)%2Ccr.fail%3D%3D%3D0%3F'Complete'%3A'Partial'%5D)%3B%7D%20var%20ws2%3DXLSX.utils.aoa_to_sheet(sd)%3BXLSX.utils.book_append_sheet(wb%2Cws2%2C'Customer%20Summary')%3B%20if(er%3E0)%7Bvar%20ed%3D%5B%5B'Customer%20ID'%2C'Customer%20Name'%2C'Attachment%20ID'%2C'File%20Name'%2C'Job%20ID'%2C'Estimate%20ID'%2C'Equipment%20ID'%2C'Error'%5D%5D%3B%20for(var%20ei%3D0%3Bei%3CmasterRows.length%3Bei%2B%2B)%7Bif(masterRows%5Bei%5D.status.indexOf('error')%3D%3D%3D0)%7Bvar%20em%3DmasterRows%5Bei%5D%3Bed.push(%5Bem.customer_id%2Cem.customer_name%2Cem.attachment_id%2Cem.file_name%2Cem.job_id%2Cem.estimate_id%2Cem.equipment_id%2Cem.status%5D)%3B%7D%7D%20var%20ws3%3DXLSX.utils.aoa_to_sheet(ed)%3BXLSX.utils.book_append_sheet(wb%2Cws3%2C'Errors')%3B%7D%20var%20xo%3DXLSX.write(wb%2C%7BbookType%3A'xlsx'%2Ctype%3A'array'%7D)%3B%20var%20xb%3Dnew%20Blob(%5Bxo%5D%2C%7Btype%3A'application%2Fvnd.openxmlformats-officedocument.spreadsheetml.sheet'%7D)%3B%20var%20cb2%3Dnew%20Blob(%5BmasterCsv.join('%5Cn')%5D%2C%7Btype%3A'text%2Fcsv'%7D)%3B%20if(useFS)%7Bawait%20writeTextToDir(dirHandle%2C'HCP_Export_Log_'%2Bds%2B'.csv'%2CmasterCsv.join('%5Cn'))%3Bawait%20writeFileToDir(dirHandle%2C%5B'HCP_Export_Log_'%2Bds%2B'.xlsx'%5D%2Cxb)%3B%7D%20else%7Bvar%20cl%3Ddocument.createElement('a')%3Bcl.href%3DURL.createObjectURL(cb2)%3Bcl.download%3D'HCP_Log_'%2Bds%2B'.csv'%3Bcl.click()%3BURL.revokeObjectURL(cl.href)%3Bawait%20sleep(500)%3Bvar%20xl%3Ddocument.createElement('a')%3Bxl.href%3DURL.createObjectURL(xb)%3Bxl.download%3D'HCP_Log_'%2Bds%2B'.xlsx'%3Bxl.click()%3BURL.revokeObjectURL(xl.href)%3B%7D%20%7Dcatch(xe)%7Bdet.textContent%3D'Excel%20error%3A%20'%2Bxe.message%3Bawait%20sleep(1500)%3B%7D%20clearInterval(keepaliveTimer)%3B%20tF.style.width%3D'100%25'%3BtF.style.background%3D'linear-gradient(90deg%2C%23059669%2C%2310b981%2C%2334d399)'%3B%20phase.textContent%3D'EXPORT%20COMPLETE'%3Bphase.style.color%3D'%2334d399'%3Btitle.textContent%3D'All%20Done!'%3BsT.textContent%3D''%3B%20var%20te%3DfmtTime(Math.round((Date.now()-dlStartTime)%2F1000))%3B%20var%20tcp%3DcustResults.length%2Ctcc%3DcustResults.filter(function(c)%7Breturn%20c.fail%3D%3D%3D0%7D).length%2Ctce%3Dtcp-tcc%3B%20summaryBox.style.display%3D'block'%3B%20var%20sh%3D'%3Cdiv%20style%3D%22margin-bottom%3A12px%3Bfont-size%3A14px%3Bfont-weight%3A600%3Bcolor%3A%23e2e8f0%22%3EVerification%20Summary%3C%2Fdiv%3E'%3B%20sh%2B%3D'%3Cdiv%20style%3D%22display%3Agrid%3Bgrid-template-columns%3A1fr%201fr%3Bgap%3A8px%3Bmargin-bottom%3A12px%22%3E'%3B%20sh%2B%3D'%3Cdiv%20style%3D%22color%3A%239ca3af%22%3EMode%3A%3C%2Fdiv%3E%3Cdiv%20style%3D%22color%3A%23e2e8f0%22%3E'%2B(useFS%3F'Direct%20to%20folder'%3A'ZIP%20('%2BzC%2B')')%2B'%3C%2Fdiv%3E'%3B%20sh%2B%3D'%3Cdiv%20style%3D%22color%3A%239ca3af%22%3ECustomers%3A%3C%2Fdiv%3E%3Cdiv%20style%3D%22color%3A%23e2e8f0%22%3E'%2Btcp%2B(skippedCust%3F'%20(%2B'%2BskippedCust%2B'%20skipped)'%3A'')%2B'%3C%2Fdiv%3E'%3B%20sh%2B%3D'%3Cdiv%20style%3D%22color%3A%239ca3af%22%3EFiles%3A%3C%2Fdiv%3E%3Cdiv%20style%3D%22color%3A%23e2e8f0%22%3E'%2B(dl-er)%2B'%20('%2BfmtBytes(totalBytes)%2B')%3C%2Fdiv%3E'%3B%20sh%2B%3D'%3Cdiv%20style%3D%22color%3A%239ca3af%22%3EErrors%3A%3C%2Fdiv%3E%3Cdiv%20style%3D%22color%3A'%2B(er%3F'%23f87171'%3A'%2334d399')%2B'%22%3E'%2Ber%2B'%3C%2Fdiv%3E'%3B%20sh%2B%3D'%3Cdiv%20style%3D%22color%3A%239ca3af%22%3ETime%3A%3C%2Fdiv%3E%3Cdiv%20style%3D%22color%3A%23e2e8f0%22%3E'%2Bte%2B'%3C%2Fdiv%3E'%3B%20sh%2B%3D'%3C%2Fdiv%3E'%3B%20if(tce%3E0)%7Bsh%2B%3D'%3Cdiv%20style%3D%22font-size%3A12px%3Bfont-weight%3A600%3Bcolor%3A%23f87171%3Bmargin-bottom%3A6px%22%3ECustomers%20with%20errors%3A%3C%2Fdiv%3E%3Cdiv%20style%3D%22font-size%3A11px%3Bcolor%3A%239ca3af%3Bmax-height%3A120px%3Boverflow-y%3Aauto%22%3E'%3B%20for(var%20ri%3D0%3Bri%3CcustResults.length%3Bri%2B%2B)%7Bif(custResults%5Bri%5D.fail%3E0)sh%2B%3D'%3Cdiv%3E'%2BcustResults%5Bri%5D.name%2B'%20%5Cu2014%20'%2BcustResults%5Bri%5D.fail%2B'%2F'%2BcustResults%5Bri%5D.total%2B'%3C%2Fdiv%3E'%3B%7Dsh%2B%3D'%3C%2Fdiv%3E'%3B%7D%20else%7Bsh%2B%3D'%3Cdiv%20style%3D%22font-size%3A12px%3Bcolor%3A%2334d399%22%3E%5Cu2713%20All%20files%20downloaded%20successfully.%3C%2Fdiv%3E'%3B%7D%20if(useFS)%7Bvar%20isMac%3D%2FMac%7CiPhone%7CiPad%2F.test(navigator.userAgent)%2CisWin%3D%2FWin%2F.test(navigator.userAgent)%3B%20sh%2B%3D'%3Cdiv%20style%3D%22margin-top%3A16px%3Bpadding-top%3A14px%3Bborder-top%3A1px%20solid%20rgba(255%2C255%2C255%2C0.06)%22%3E'%3B%20sh%2B%3D'%3Cdiv%20style%3D%22font-size%3A13px%3Bfont-weight%3A600%3Bcolor%3A%23e2e8f0%3Bmargin-bottom%3A8px%22%3E%5Cud83d%5Cudce6%20Next%3A%20Zip%20and%20Send%3C%2Fdiv%3E'%3B%20if(isMac)%7Bsh%2B%3D'%3Cdiv%20style%3D%22font-size%3A12px%3Bcolor%3A%239ca3af%3Bline-height%3A1.6%22%3E1.%20Open%20%3Cstrong%20style%3D%22color%3A%23cbd5e1%22%3EFinder%3C%2Fstrong%3E%3Cbr%3E2.%20%3Cstrong%20style%3D%22color%3A%23cbd5e1%22%3ERight-click%3C%2Fstrong%3E%20the%20%3Cstrong%20style%3D%22color%3A%23a78bfa%22%3EHCP_Export%3C%2Fstrong%3E%20folder%3Cbr%3E3.%20Click%20%3Cstrong%20style%3D%22color%3A%23cbd5e1%22%3ECompress%3C%2Fstrong%3E%3Cbr%3E4.%20Send%20the%20.zip%20file%3C%2Fdiv%3E'%3B%7D%20else%20if(isWin)%7Bsh%2B%3D'%3Cdiv%20style%3D%22font-size%3A12px%3Bcolor%3A%239ca3af%3Bline-height%3A1.6%22%3E1.%20Open%20%3Cstrong%20style%3D%22color%3A%23cbd5e1%22%3EFile%20Explorer%3C%2Fstrong%3E%3Cbr%3E2.%20%3Cstrong%20style%3D%22color%3A%23cbd5e1%22%3ERight-click%3C%2Fstrong%3E%20the%20%3Cstrong%20style%3D%22color%3A%23a78bfa%22%3EHCP_Export%3C%2Fstrong%3E%20folder%3Cbr%3E3.%20Click%20%3Cstrong%20style%3D%22color%3A%23cbd5e1%22%3ECompress%20to%20ZIP%20file%3C%2Fstrong%3E%3Cbr%3E4.%20Send%20the%20.zip%20file%3C%2Fdiv%3E'%3B%7D%20else%7Bsh%2B%3D'%3Cdiv%20style%3D%22font-size%3A12px%3Bcolor%3A%239ca3af%3Bline-height%3A1.6%22%3ERight-click%20the%20%3Cstrong%20style%3D%22color%3A%23a78bfa%22%3EHCP_Export%3C%2Fstrong%3E%20folder%20%5Cu2192%20Compress%20%5Cu2192%20Send%20the%20.zip%3C%2Fdiv%3E'%3B%7D%20sh%2B%3D'%3Cdiv%20style%3D%22font-size%3A11px%3Bcolor%3A%234b5563%3Bmargin-top%3A8px%22%3E%5Cud83d%5Cudca1%20Or%20share%20via%20Google%20Drive%20%2F%20Dropbox%20for%20large%20exports.%3C%2Fdiv%3E%3C%2Fdiv%3E'%3B%7D%20summaryBox.innerHTML%3Dsh%3B%20det.textContent%3D(dl-er)%2B'%20files%20('%2BfmtBytes(totalBytes)%2B')%20in%20'%2Bte%3BsF.textContent%3D(dl-er)%2B'%20files'%3B%20cb.textContent%3D'Close'%3Bcb.style.background%3D'rgba(16%2C185%2C129%2C0.15)'%3Bcb.style.color%3D'%2334d399'%3B%20window.__hcpExporterRunning%3Dfalse%3B%20%7Dcatch(e)%7BclearInterval(keepaliveTimer)%3Bphase.textContent%3D'ERROR'%3Bphase.style.color%3D'%23ef4444'%3Bdet.textContent%3De.message%3BtF.style.background%3D'linear-gradient(90deg%2C%23dc2626%2C%23ef4444)'%3Bcb.textContent%3D'Close'%3Bwindow.__hcpExporterRunning%3Dfalse%3B%7D%7D%20run()%3B%20%7D)()%3B)";
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('bookmarklet').href=BOOKMARKLET;
-  var stored=sessionStorage.getItem('hcp_access');
-  if(stored&&VALID.includes(stored))showTool(stored);
+  var s=sessionStorage.getItem('hcp_access');if(s&&VALID.includes(s))showTool(s);
   document.getElementById('code-input').addEventListener('keydown',function(e){if(e.key==='Enter')tryAccess()});
-  document.getElementById('code-input').addEventListener('input',function(){
-    document.getElementById('code-input').classList.remove('error');
-    document.getElementById('error-msg').textContent='';
-    document.getElementById('submit-btn').classList.toggle('active',!!this.value.trim());
-  });
-  document.addEventListener('contextmenu',function(e){e.preventDefault()});
-  document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&['s','u','p'].includes(e.key.toLowerCase()))e.preventDefault();if(e.key==='F12')e.preventDefault();});
+  document.getElementById('code-input').addEventListener('input',function(){document.getElementById('code-input').classList.remove('error');document.getElementById('error-msg').textContent='';document.getElementById('submit-btn').classList.toggle('active',!!this.value.trim());});
 });
-function tryAccess(){
-  var code=document.getElementById('code-input').value.trim();
-  if(VALID.includes(code)){sessionStorage.setItem('hcp_access',code);showTool(code);}
-  else{document.getElementById('error-msg').textContent='Invalid access code. Please check and try again.';document.getElementById('code-input').classList.add('error');var card=document.getElementById('gate-card');card.classList.add('shake');setTimeout(function(){card.classList.remove('shake')},500);}
-}
-function showTool(code){document.getElementById('gate').style.display='none';document.getElementById('tool').style.display='block';document.getElementById('footer-code').textContent=code.substring(0,6)+'\u2022\u2022\u2022\u2022';}
+function tryAccess(){var c=document.getElementById('code-input').value.trim();if(VALID.includes(c)){sessionStorage.setItem('hcp_access',c);showTool(c);}else{document.getElementById('error-msg').textContent='Invalid access code.';document.getElementById('code-input').classList.add('error');var d=document.getElementById('gate-card');d.classList.add('shake');setTimeout(function(){d.classList.remove('shake')},500);}}
+function showTool(c){document.getElementById('gate').style.display='none';document.getElementById('tool').style.display='block';document.getElementById('footer-code').textContent=c.substring(0,6)+'••••';}
 function signOut(){sessionStorage.removeItem('hcp_access');document.getElementById('tool').style.display='none';document.getElementById('gate').style.display='flex';document.getElementById('code-input').value='';document.getElementById('submit-btn').classList.remove('active');}
-function copyBookmarklet(){navigator.clipboard.writeText(BOOKMARKLET).then(function(){var btn=document.getElementById('copy-btn');btn.textContent='\u2713 Copied to clipboard';btn.classList.add('copied');setTimeout(function(){btn.textContent="Can't drag? Copy code manually \u2192";btn.classList.remove('copied')},2500);});}
+function copyBookmarklet(){navigator.clipboard.writeText(BOOKMARKLET).then(function(){var b=document.getElementById('copy-btn');b.textContent='✓ Copied';b.classList.add('copied');setTimeout(function(){b.textContent="Can't drag? Copy code →";b.classList.remove('copied')},2500);});}
 </script>
 </body>
 </html>
