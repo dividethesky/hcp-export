@@ -123,10 +123,53 @@ tF.style.width='100%';tF.style.background='linear-gradient(90deg,#f59e0b,#eab308
 cb.textContent='Close';window.__hcpExporterRunning=false;clearInterval(keepaliveTimer);return;
 }
 if(!totF&&skippedCust>0){
-phase.textContent='COMPLETE \u2014 NO NEW ATTACHMENTS';
-det.textContent=skippedCust+' customers already downloaded with no new files.';
-tF.style.width='100%';tF.style.background='linear-gradient(90deg,#f59e0b,#eab308)';
-cb.textContent='Close';window.__hcpExporterRunning=false;clearInterval(keepaliveTimer);return;
+phase.textContent='SCAN COMPLETE \u2014 NO NEW FILES';
+tF.style.width='40%';
+det.textContent='';
+summaryBox.style.display='block';
+summaryBox.innerHTML='<div style="margin-bottom:14px;font-size:15px;font-weight:600;color:#e2e8f0">No New Attachments</div><div style="font-size:13px;color:#6b7280;margin-bottom:16px">'+skippedCust+' customers were already exported and have no new files.</div><div style="display:flex;gap:10px"><button id="__hcp_redownload" style="flex:1;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;font-size:14px;font-weight:600;cursor:pointer">Re-download All Customers</button><button id="__hcp_cancel_dl" style="padding:12px 20px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.05);color:#9ca3af;font-size:14px;cursor:pointer">Close</button></div>';
+var uc0=await new Promise(function(res){
+document.getElementById('__hcp_redownload').onclick=function(){res('redownload')};
+document.getElementById('__hcp_cancel_dl').onclick=function(){res('no')};
+});
+if(uc0==='no'){cleanup();return;}
+clearAllDedup();
+forceAll=true;
+summaryBox.style.display='none';summaryBox.innerHTML='';
+phase.textContent='PHASE 1 OF 3 \u2014 RE-SCANNING ALL CUSTOMERS';
+det.textContent='Re-scanning with no skips...';
+buckets=[];totF=0;skippedCust=0;updatedCust=0;pg=1;cD=0;
+while(!cancelled){
+var cd3=await api('/alpha/customers?page='+pg+'&page_size='+PAGE_SIZE+'&contractor=false');
+var cs3=cd3.data||[];if(!cs3.length)break;
+var tP3=cd3.total_pages_count||1;
+for(var i3=0;i3<cs3.length;i3++){
+if(cancelled)return;cD++;
+var c3=cs3[i3];
+var cn3=((c3.first_name||'')+' '+(c3.last_name||'')).trim()||c3.display_name||'Unknown';
+tF.style.width=pct(cD,tC)*0.4+'%';
+det.textContent='Scanning: '+cn3+' ('+cD+'/'+tC+')';
+var cf3=[],ap3=1;
+while(true){try{
+var ad3=await api('/api/customers/'+c3.id+'/attachments?page='+ap3+'&page_size='+ATT_PAGE_SIZE+'&sort_by=created_at&sort_direction=desc&attachable_type=');
+var at3=ad3.data||[];
+for(var j3=0;j3<at3.length;j3++){var a3=at3[j3];var du3=a3.download_url||a3.attachment_file_url;if(!du3)continue;
+cf3.push({aId:a3.id||'',fN:a3.file_name||a3.file_file_name||'file',aT:a3.attachable_type||'Unknown',aTypeId:String(a3.attachable_id||''),aUuid:a3.attachable_uuid||'',custUuid:a3.customer_uuid||c3.id,du:du3,fSize:a3.file_file_size||0});}
+if(ap3>=(ad3.total_pages_count||1))break;ap3++;
+}catch(e){break;}}
+if(cf3.length>0){
+var jobMap3={};
+try{var jp3=1;while(true){var jd3=await api('/alpha/jobs?page='+jp3+'&page_size=100&parent_customer_uuid='+c3.id);var jw3=jd3.data||{};var jobs3=jw3.data||jd3.data||[];if(!Array.isArray(jobs3))jobs3=[];for(var ji3=0;ji3<jobs3.length;ji3++){jobMap3[jobs3[ji3].id]={num:jobs3[ji3].invoice_number||'',name:jobs3[ji3].name||''};}var jtp3=jd3.total_page_count||jd3.total_pages_count||1;if(jp3>=jtp3)break;jp3++;}}catch(e){}
+var cni3='';for(var fi3=0;fi3<cf3.length;fi3++){if(cf3[fi3].aT==='Customer'&&cf3[fi3].aTypeId){cni3=cf3[fi3].aTypeId;break;}}
+buckets.push({cn:cn3,cId:c3.id,cNumId:cni3,files:cf3,jobMap:jobMap3,attCount:cf3.length});
+totF+=cf3.length;
+}
+sF.textContent=totF+' files found';
+await sleep(50);
+}
+if(pg>=tP3)break;pg++;
+}
+if(!totF){phase.textContent='NO ATTACHMENTS';det.textContent='No attachments found.';tF.style.width='100%';tF.style.background='linear-gradient(90deg,#f59e0b,#eab308)';cb.textContent='Close';window.__hcpExporterRunning=false;clearInterval(keepaliveTimer);return;}
 }
 phase.textContent='SCAN COMPLETE';
 tF.style.width='40%';
