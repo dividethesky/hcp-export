@@ -4,10 +4,12 @@ if(window.__hcpExporterRunning){alert('Export is already running!');return;}
 window.__hcpExporterRunning=true;
 var PAGE_SIZE=100,ATT_PAGE_SIZE=100,RETRY_MAX=2,RETRY_DELAY=2000,KEEPALIVE_MS=120000,MAX_ZIP_BYTES=800*1024*1024,CONCURRENCY=6;
 var keepaliveTimer=setInterval(function(){fetch('/api/v2/organization',{credentials:'include',headers:{accept:'application/json'}}).catch(function(){});},KEEPALIVE_MS);
-var DEDUP_KEY='__hcp_export_done';
-function getCompleted(){try{return JSON.parse(sessionStorage.getItem(DEDUP_KEY)||'{}');}catch(e){return {};}}
-function markCompleted(cid){var d=getCompleted();d[cid]=Date.now();sessionStorage.setItem(DEDUP_KEY,JSON.stringify(d));}
-function isCompleted(cid){return !!getCompleted()[cid];}
+var DEDUP_KEY='__hcp_export_v2';
+function getDedupData(){try{return JSON.parse(sessionStorage.getItem(DEDUP_KEY)||'{}');}catch(e){return {};}}
+function saveDedupData(d){sessionStorage.setItem(DEDUP_KEY,JSON.stringify(d));}
+function getStoredCount(cid){var d=getDedupData();return d[cid]?d[cid].count:0;}
+function markCompleted(cid,count){var d=getDedupData();d[cid]={count:count,t:Date.now()};saveDedupData(d);}
+function clearAllDedup(){sessionStorage.removeItem(DEDUP_KEY);}
 var overlay=document.createElement('div');
 overlay.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(8,8,18,0.92);z-index:999999;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,sans-serif;backdrop-filter:blur(4px)';
 var box=document.createElement('div');
@@ -53,7 +55,7 @@ var f1=await api('/alpha/customers?page=1&page_size=1&contractor=false');
 var tC=f1.total_count||0;
 det.textContent='Found '+tC+' customers';
 await sleep(400);
-var buckets=[],totF=0,skippedCust=0,pg=1,cD=0;
+var buckets=[],totF=0,skippedCust=0,updatedCust=0,forceAll=false,pg=1,cD=0;
 while(!cancelled){
 var cd=await api('/alpha/customers?page='+pg+'&page_size='+PAGE_SIZE+'&contractor=false');
 var cs=cd.data||[];if(!cs.length)break;
@@ -64,21 +66,27 @@ var c=cs[i];
 var cn=((c.first_name||'')+' '+(c.last_name||'')).trim()||c.display_name||'Unknown';
 tF.style.width=pct(cD,tC)*0.4+'%';
 det.textContent='Scanning: '+cn+' ('+cD+'/'+tC+')';
-if(isCompleted(c.id)){skippedCust++;sF.textContent=totF+' files found ('+skippedCust+' skipped)';await sleep(50);continue;}
 var cf=[],ap=1;
+var currentAttCount=0;
 while(true){try{
 var ad=await api('/api/customers/'+c.id+'/attachments?page='+ap+'&page_size='+ATT_PAGE_SIZE+'&sort_by=created_at&sort_direction=desc&attachable_type=');
 var at=ad.data||[];
+currentAttCount=ad.total_count||at.length;
 for(var j=0;j<at.length;j++){var a=at[j];var du=a.download_url||a.attachment_file_url;if(!du)continue;
 cf.push({aId:a.id||'',fN:a.file_name||a.file_file_name||'file',aT:a.attachable_type||'Unknown',aTypeId:String(a.attachable_id||''),aUuid:a.attachable_uuid||'',custUuid:a.customer_uuid||c.id,du:du,fSize:a.file_file_size||0});}
 if(ap>=(ad.total_pages_count||1))break;ap++;
 }catch(e){break;}}
 if(cf.length>0){
+var storedCount=getStoredCount(c.id);
+if(!forceAll&&storedCount>0&&storedCount>=currentAttCount){
+skippedCust++;sF.textContent=totF+' files found ('+skippedCust+' skipped)';await sleep(50);continue;
+}
+if(storedCount>0&&storedCount<currentAttCount){updatedCust++;}
 var jobMap={};
 try{
 var jp=1;
 while(true){
-var jd=await api('/alpha/jobs?page='+jp+'&page_size=100&customer_id='+c.id+'&expand[]=customer');
+var jd=await api('/alpha/jobs?page='+jp+'&page_size=100&parent_customer_uuid='+c.id);
 var jobs=jd.data||[];
 for(var ji=0;ji<jobs.length;ji++){
 var jb=jobs[ji];
@@ -91,18 +99,24 @@ var custNumericId='';
 for(var fi=0;fi<cf.length;fi++){
 if(cf[fi].aT==='Customer'&&cf[fi].aTypeId){custNumericId=cf[fi].aTypeId;break;}
 }
-buckets.push({cn:cn,cId:c.id,cNumId:custNumericId,files:cf,jobMap:jobMap});
+buckets.push({cn:cn,cId:c.id,cNumId:custNumericId,files:cf,jobMap:jobMap,attCount:currentAttCount});
 totF+=cf.length;
 }
-sF.textContent=totF+' files found'+(skippedCust?' ('+skippedCust+' skipped)':'');
+sF.textContent=totF+' files found'+(skippedCust?' ('+skippedCust+' skipped)':'')+(updatedCust?' ('+updatedCust+' updated)':'');
 await sleep(50);
 }
 if(pg>=tP)break;pg++;
 }
 if(cancelled)return;
-if(!totF){
+if(!totF&&!skippedCust){
+phase.textContent='COMPLETE \u2014 NO ATTACHMENTS FOUND';
+det.textContent='No attachments found in this account.';
+tF.style.width='100%';tF.style.background='linear-gradient(90deg,#f59e0b,#eab308)';
+cb.textContent='Close';window.__hcpExporterRunning=false;clearInterval(keepaliveTimer);return;
+}
+if(!totF&&skippedCust>0){
 phase.textContent='COMPLETE \u2014 NO NEW ATTACHMENTS';
-det.textContent=skippedCust?skippedCust+' customers already downloaded.':'No attachments found.';
+det.textContent=skippedCust+' customers already downloaded with no new files.';
 tF.style.width='100%';tF.style.background='linear-gradient(90deg,#f59e0b,#eab308)';
 cb.textContent='Close';window.__hcpExporterRunning=false;clearInterval(keepaliveTimer);return;
 }
@@ -119,15 +133,61 @@ ch+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255
 ch+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px"><div style="font-size:11px;color:#6b7280;margin-bottom:2px">Estimated Size</div><div style="font-size:18px;font-weight:700;color:#e2e8f0">'+fmtBytes(estTotalBytes)+'</div></div>';
 ch+='<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px"><div style="font-size:11px;color:#6b7280;margin-bottom:2px">Estimated Time</div><div style="font-size:18px;font-weight:700;color:#e2e8f0">~'+fmtTime(estTimeSec)+'</div></div>';
 ch+='</div>';
-if(skippedCust>0)ch+='<div style="font-size:12px;color:#6b7280;margin-bottom:12px">'+skippedCust+' customers skipped (already downloaded)</div>';
+if(skippedCust>0)ch+='<div style="font-size:12px;color:#6b7280;margin-bottom:4px">'+skippedCust+' customers skipped (no new files since last export)</div>';
+if(updatedCust>0)ch+='<div style="font-size:12px;color:#818cf8;margin-bottom:4px">'+updatedCust+' customers have new files since last export</div>';
 ch+='<div style="font-size:12px;color:#f59e0b;line-height:1.5;margin-bottom:16px">Make sure you have at least <strong style="color:#fbbf24">'+fmtBytes(Math.round(estTotalBytes*1.1))+'</strong> of free disk space.</div>';
-ch+='<div style="display:flex;gap:10px">';
+ch+='<div style="display:flex;gap:10px;margin-bottom:12px">';
 ch+='<button id="__hcp_start_dl" style="flex:1;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;font-size:14px;font-weight:600;cursor:pointer">Start Download</button>';
 ch+='<button id="__hcp_cancel_dl" style="padding:12px 20px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.05);color:#9ca3af;font-size:14px;cursor:pointer">Cancel</button>';
 ch+='</div>';
+if(skippedCust>0){ch+='<button id="__hcp_redownload" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:#9ca3af;font-size:12px;cursor:pointer">Re-download all customers (ignore previous exports)</button>';}
 det.textContent='';summaryBox.style.display='block';summaryBox.innerHTML=ch;
-var uc=await new Promise(function(res){document.getElementById('__hcp_start_dl').onclick=function(){res('go')};document.getElementById('__hcp_cancel_dl').onclick=function(){res('no')};});
+var uc=await new Promise(function(res){
+document.getElementById('__hcp_start_dl').onclick=function(){res('go')};
+document.getElementById('__hcp_cancel_dl').onclick=function(){res('no')};
+var reBtn=document.getElementById('__hcp_redownload');
+if(reBtn)reBtn.onclick=function(){res('redownload')};
+});
 if(uc==='no'){cleanup();return;}
+if(uc==='redownload'){
+clearAllDedup();
+forceAll=true;
+summaryBox.style.display='none';summaryBox.innerHTML='';
+phase.textContent='PHASE 1 OF 3 \u2014 RE-SCANNING ALL CUSTOMERS';
+det.textContent='Re-scanning with no skips...';
+buckets=[];totF=0;skippedCust=0;updatedCust=0;pg=1;cD=0;
+while(!cancelled){
+var cd2=await api('/alpha/customers?page='+pg+'&page_size='+PAGE_SIZE+'&contractor=false');
+var cs2=cd2.data||[];if(!cs2.length)break;
+var tP2=cd2.total_pages_count||1;
+for(var i2=0;i2<cs2.length;i2++){
+if(cancelled)return;cD++;
+var c2=cs2[i2];
+var cn2=((c2.first_name||'')+' '+(c2.last_name||'')).trim()||c2.display_name||'Unknown';
+tF.style.width=pct(cD,tC)*0.4+'%';
+det.textContent='Scanning: '+cn2+' ('+cD+'/'+tC+')';
+var cf2=[],ap2=1;
+while(true){try{
+var ad2=await api('/api/customers/'+c2.id+'/attachments?page='+ap2+'&page_size='+ATT_PAGE_SIZE+'&sort_by=created_at&sort_direction=desc&attachable_type=');
+var at2=ad2.data||[];
+for(var j2=0;j2<at2.length;j2++){var a2=at2[j2];var du2=a2.download_url||a2.attachment_file_url;if(!du2)continue;
+cf2.push({aId:a2.id||'',fN:a2.file_name||a2.file_file_name||'file',aT:a2.attachable_type||'Unknown',aTypeId:String(a2.attachable_id||''),aUuid:a2.attachable_uuid||'',custUuid:a2.customer_uuid||c2.id,du:du2,fSize:a2.file_file_size||0});}
+if(ap2>=(ad2.total_pages_count||1))break;ap2++;
+}catch(e){break;}}
+if(cf2.length>0){
+var jobMap2={};
+try{var jp2=1;while(true){var jd2=await api('/alpha/jobs?page='+jp2+'&page_size=100&parent_customer_uuid='+c2.id);var jobs2=jd2.data||[];for(var ji2=0;ji2<jobs2.length;ji2++){jobMap2[jobs2[ji2].id]={num:jobs2[ji2].invoice_number||'',name:jobs2[ji2].name||''};}if(jp2>=(jd2.total_pages_count||1))break;jp2++;}}catch(e){}
+var cni2='';for(var fi2=0;fi2<cf2.length;fi2++){if(cf2[fi2].aT==='Customer'&&cf2[fi2].aTypeId){cni2=cf2[fi2].aTypeId;break;}}
+buckets.push({cn:cn2,cId:c2.id,cNumId:cni2,files:cf2,jobMap:jobMap2,attCount:cf2.length});
+totF+=cf2.length;
+}
+sF.textContent=totF+' files found';
+await sleep(50);
+}
+if(pg>=tP2)break;pg++;
+}
+if(!totF){phase.textContent='NO ATTACHMENTS';det.textContent='No attachments found.';tF.style.width='100%';tF.style.background='linear-gradient(90deg,#f59e0b,#eab308)';cb.textContent='Close';window.__hcpExporterRunning=false;clearInterval(keepaliveTimer);return;}
+}
 summaryBox.style.display='none';summaryBox.innerHTML='';
 phase.textContent='PHASE 2 OF 3 \u2014 PREPARING DOWNLOAD';
 det.textContent=totF+' attachments across '+buckets.length+' customers.';
@@ -173,7 +233,7 @@ if(!useFS){var ecs=bk.files.length*2*1024*1024;if(zipBytes>0&&zipBytes+ecs>MAX_Z
 var tasks=[];for(var fi=0;fi<bk.files.length;fi++){tasks.push({ff:bk.files[fi],fo:fo,cId:bk.cId,cNumId:bk.cNumId,cNm:bk.cn,jMap:bk.jobMap});}
 var batch=await dlBatch(tasks);
 for(var ri=0;ri<batch.results.length;ri++){masterCsv.push(batch.results[ri].row);if(zipCsv)zipCsv.push(batch.results[ri].row);masterRows.push(batch.results[ri].mr);}
-if(batch.er===0)markCompleted(bk.cId);
+if(batch.er===0)markCompleted(bk.cId,bk.attCount);
 custResults.push({name:bk.cn,id:bk.cId,numId:bk.cNumId,total:bk.files.length,ok:batch.ok,fail:batch.er,bytes:batch.bytes});
 }
 if(!useFS&&zip){var hf=false;try{hf=Object.keys(zip.files).length>0;}catch(e){}if(hf)await flushZip();}
