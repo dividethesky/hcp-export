@@ -45,7 +45,7 @@ async function api(url){var h={accept:'application/json'};var csrf=getCSRF();if(
 async function dlB(url,retries){retries=retries||0;try{var r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);return r.blob();}catch(e){if(retries<RETRY_MAX){await sleep(RETRY_DELAY);return dlB(url,retries+1);}throw e;}}
 function safe(s,m){return(s||'unnamed').replace(/[^a-zA-Z0-9 ._-]/g,'_').substring(0,m||60);}
 var useFS=!!window.showDirectoryPicker;
-async function getDir(){try{var dh=await window.showDirectoryPicker({mode:'readwrite',startIn:'desktop'});return await dh.getDirectoryHandle('HCP_Export_'+(new Date().toISOString().slice(0,10)),{create:true});}catch(e){return null;}}
+async function getDir(){try{var dh=await window.showDirectoryPicker({mode:'readwrite',startIn:'downloads'});return await dh.getDirectoryHandle('HCP_Export_'+(new Date().toISOString().slice(0,10)),{create:true});}catch(e){return null;}}
 async function writeFileToDir(dh,pp,blob){var c=dh;for(var i=0;i<pp.length-1;i++){c=await c.getDirectoryHandle(pp[i],{create:true});}var fh=await c.getFileHandle(pp[pp.length-1],{create:true});var w=await fh.createWritable();await w.write(blob);await w.close();}
 async function writeTextToDir(dh,fn,txt){var fh=await dh.getFileHandle(fn,{create:true});var w=await fh.createWritable();await w.write(txt);await w.close();}
 async function run(){
@@ -192,7 +192,7 @@ summaryBox.style.display='none';summaryBox.innerHTML='';
 phase.textContent='PHASE 2 OF 3 \u2014 PREPARING DOWNLOAD';
 det.textContent=totF+' attachments across '+buckets.length+' customers.';
 var dirHandle=null;
-if(useFS){det.textContent='Choose a folder to save your export into...';dirHandle=await getDir();if(!dirHandle){useFS=false;det.textContent='Folder cancelled. Falling back to ZIP...';await sleep(1000);}else{sZ.textContent='\ud83d\udcc2 Saving to folder';det.textContent='Folder selected. Loading libraries...';}}
+if(useFS){det.textContent='Select a folder to save into (Downloads is recommended). A subfolder will be created automatically.';dirHandle=await getDir();if(!dirHandle){useFS=false;det.textContent='Folder cancelled. Falling back to ZIP...';await sleep(1000);}else{sZ.textContent='\ud83d\udcc2 Saving to folder';det.textContent='Folder selected. Loading libraries...';}}
 if(!useFS){sZ.textContent='ZIP mode';det.textContent='Loading ZIP library...';}
 var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';document.head.appendChild(sc);
 await new Promise(function(ok,fl){sc.onload=ok;sc.onerror=function(){fl(new Error('JSZip failed'))};});
