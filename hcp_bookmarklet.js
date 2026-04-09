@@ -45,7 +45,12 @@ async function api(url){var h={accept:'application/json'};var csrf=getCSRF();if(
 async function dlB(url,retries){retries=retries||0;try{var r=await fetch(url);if(!r.ok)throw new Error('HTTP '+r.status);return r.blob();}catch(e){if(retries<RETRY_MAX){await sleep(RETRY_DELAY);return dlB(url,retries+1);}throw e;}}
 function safe(s,m){return(s||'unnamed').replace(/[^a-zA-Z0-9 ._-]/g,'_').substring(0,m||60);}
 var useFS=!!window.showDirectoryPicker;
-async function getDir(){try{var dh=await window.showDirectoryPicker({mode:'readwrite',startIn:'downloads'});return await dh.getDirectoryHandle('HCP_Export_'+(new Date().toISOString().slice(0,10)),{create:true});}catch(e){return null;}}
+async function getDir(){
+try{var dh=await window.showDirectoryPicker({mode:'readwrite',startIn:'downloads'});return await dh.getDirectoryHandle('HCP_Export_'+(new Date().toISOString().slice(0,10)),{create:true});}
+catch(e){
+try{var dh2=await window.showDirectoryPicker({mode:'readwrite'});return await dh2.getDirectoryHandle('HCP_Export_'+(new Date().toISOString().slice(0,10)),{create:true});}
+catch(e2){return null;}
+}}
 async function writeFileToDir(dh,pp,blob){var c=dh;for(var i=0;i<pp.length-1;i++){c=await c.getDirectoryHandle(pp[i],{create:true});}var fh=await c.getFileHandle(pp[pp.length-1],{create:true});var w=await fh.createWritable();await w.write(blob);await w.close();}
 async function writeTextToDir(dh,fn,txt){var fh=await dh.getFileHandle(fn,{create:true});var w=await fh.createWritable();await w.write(txt);await w.close();}
 async function run(){
@@ -87,12 +92,15 @@ try{
 var jp=1;
 while(true){
 var jd=await api('/alpha/jobs?page='+jp+'&page_size=100&parent_customer_uuid='+c.id);
-var jobs=jd.data||[];
+var jobsWrapper=jd.data||{};
+var jobs=jobsWrapper.data||jd.data||[];
+if(!Array.isArray(jobs))jobs=[];
 for(var ji=0;ji<jobs.length;ji++){
 var jb=jobs[ji];
 jobMap[jb.id]={num:jb.invoice_number||'',name:jb.name||''};
 }
-if(jp>=(jd.total_pages_count||1))break;jp++;
+var jtp=jd.total_page_count||jd.total_pages_count||1;
+if(jp>=jtp)break;jp++;
 }
 }catch(e){}
 var custNumericId='';
@@ -176,7 +184,7 @@ if(ap2>=(ad2.total_pages_count||1))break;ap2++;
 }catch(e){break;}}
 if(cf2.length>0){
 var jobMap2={};
-try{var jp2=1;while(true){var jd2=await api('/alpha/jobs?page='+jp2+'&page_size=100&parent_customer_uuid='+c2.id);var jobs2=jd2.data||[];for(var ji2=0;ji2<jobs2.length;ji2++){jobMap2[jobs2[ji2].id]={num:jobs2[ji2].invoice_number||'',name:jobs2[ji2].name||''};}if(jp2>=(jd2.total_pages_count||1))break;jp2++;}}catch(e){}
+try{var jp2=1;while(true){var jd2=await api('/alpha/jobs?page='+jp2+'&page_size=100&parent_customer_uuid='+c2.id);var jw2=jd2.data||{};var jobs2=jw2.data||jd2.data||[];if(!Array.isArray(jobs2))jobs2=[];for(var ji2=0;ji2<jobs2.length;ji2++){jobMap2[jobs2[ji2].id]={num:jobs2[ji2].invoice_number||'',name:jobs2[ji2].name||''};}var jtp2=jd2.total_page_count||jd2.total_pages_count||1;if(jp2>=jtp2)break;jp2++;}}catch(e){}
 var cni2='';for(var fi2=0;fi2<cf2.length;fi2++){if(cf2[fi2].aT==='Customer'&&cf2[fi2].aTypeId){cni2=cf2[fi2].aTypeId;break;}}
 buckets.push({cn:cn2,cId:c2.id,cNumId:cni2,files:cf2,jobMap:jobMap2,attCount:cf2.length});
 totF+=cf2.length;
@@ -192,7 +200,7 @@ summaryBox.style.display='none';summaryBox.innerHTML='';
 phase.textContent='PHASE 2 OF 3 \u2014 PREPARING DOWNLOAD';
 det.textContent=totF+' attachments across '+buckets.length+' customers.';
 var dirHandle=null;
-if(useFS){det.textContent='Select a folder to save into (Downloads is recommended). A subfolder will be created automatically.';dirHandle=await getDir();if(!dirHandle){useFS=false;det.textContent='Folder cancelled. Falling back to ZIP...';await sleep(1000);}else{sZ.textContent='\ud83d\udcc2 Saving to folder';det.textContent='Folder selected. Loading libraries...';}}
+if(useFS){det.textContent='Select a folder to save into. Tip: Create a new folder on your Desktop or in Downloads, then select it.';dirHandle=await getDir();if(!dirHandle){useFS=false;det.textContent='Folder selection failed. Falling back to ZIP downloads...';await sleep(1000);}else{sZ.textContent='\ud83d\udcc2 Saving to folder';det.textContent='Folder selected. Loading libraries...';}}
 if(!useFS){sZ.textContent='ZIP mode';det.textContent='Loading ZIP library...';}
 var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';document.head.appendChild(sc);
 await new Promise(function(ok,fl){sc.onload=ok;sc.onerror=function(){fl(new Error('JSZip failed'))};});
